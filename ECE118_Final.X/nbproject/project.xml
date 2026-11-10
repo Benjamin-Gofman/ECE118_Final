@@ -3,14 +3,14 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>ECE118_Final</name>
-            <creation-uuid>1b669ef7-055b-42b6-b2b6-64438e8c26d3</creation-uuid>
+            <name>Repair</name>
+            <creation-uuid>ffcbaac0-1200-4f4d-b7e9-7ab5afab0b9e</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
+                <sourceRootElem>C:\Users\Ben\Documents\UCSC\ECE-118\Repair.X</sourceRootElem>
                 <sourceRootElem>C:\ECE118</sourceRootElem>
-                <sourceRootElem>.</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

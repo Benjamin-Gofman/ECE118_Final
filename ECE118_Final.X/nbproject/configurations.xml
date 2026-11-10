@@ -4,24 +4,16 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Bumper.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/ES_Configure.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Motor.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Navigation.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/TapeSensor.h</itemPath>
+      <itemPath>C:/ECE118/include/AD.h</itemPath>
       <itemPath>C:/ECE118/include/BOARD.h</itemPath>
-      <itemPath>C:/ECE118/include/pwm.h</itemPath>
       <itemPath>C:/ECE118/include/IO_Ports.h</itemPath>
+      <itemPath>C:/ECE118/include/pwm.h</itemPath>
       <itemPath>C:/ECE118/include/serial.h</itemPath>
-<<<<<<< Updated upstream
-      <itemPath>Bumper.h</itemPath>
-      <itemPath>ES_Configure.h</itemPath>
-      <itemPath>Motor.h</itemPath>
-      <itemPath>Navigation.h</itemPath>
-      <itemPath>TapeSensor.h</itemPath>
-=======
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/ES_Configure.h</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Motor.h</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/TapeSensor.h</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Bumper.h</itemPath>
-      <itemPath>C:/ECE118/include/ES_Framework.h</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Navigation.h</itemPath>
->>>>>>> Stashed changes
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -36,29 +28,20 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Bumper.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Motor.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Navigation.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/TapeSensor.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/main.c</itemPath>
+      <itemPath>C:/ECE118/src/AD.c</itemPath>
       <itemPath>C:/ECE118/src/BOARD.c</itemPath>
       <itemPath>C:/ECE118/src/pwm.c</itemPath>
       <itemPath>C:/ECE118/src/serial.c</itemPath>
-<<<<<<< Updated upstream
-      <itemPath>C:/ECE118/src/AD.c</itemPath>
-      <itemPath>Navigation.c</itemPath>
-      <itemPath>Bumper.c</itemPath>
-      <itemPath>Motor.c</itemPath>
-      <itemPath>TapeSensor.c</itemPath>
-      <itemPath>main.c</itemPath>
-=======
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Bumper.c</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Motor.c</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Navigation.c</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/TapeSensor.c</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/main.c</itemPath>
-      <itemPath>C:/ECE118/src/AD.c</itemPath>
->>>>>>> Stashed changes
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
+    <Elem>C:\Users\Ben\Documents\UCSC\ECE-118\Repair.X</Elem>
     <Elem>C:\ECE118</Elem>
-    <Elem>.</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -119,7 +102,7 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="expand-pragma-config" value="false"/>
-        <property key="extra-include-directories" value=".;C:\ECE118\include"/>
+        <property key="extra-include-directories" value=".;C:/ECE118/include"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
@@ -274,67 +257,6 @@
         <property key="stack-smashing" value=""/>
         <property key="wpo-lto" value="false"/>
       </C32Global>
-<<<<<<< Updated upstream
-=======
-      <item path="C:/ECE118/include/BOARD.h" ex="true" overriding="false">
-      </item>
-      <item path="C:/ECE118/include/ES_Framework.h" ex="true" overriding="false">
-      </item>
-      <item path="C:/ECE118/include/IO_Ports.h" ex="true" overriding="false">
-      </item>
-      <item path="C:/ECE118/include/pwm.h" ex="true" overriding="false">
-      </item>
-      <item path="C:/ECE118/include/serial.h" ex="true" overriding="false">
-      </item>
-      <item path="C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Bumper.h"
-            ex="true"
-            overriding="false">
-      </item>
-      <item path="C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/ES_Configure.h"
-            ex="true"
-            overriding="false">
-      </item>
-      <item path="C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Motor.h"
-            ex="true"
-            overriding="false">
-        <C32>
-        </C32>
-        <C32-AR>
-        </C32-AR>
-        <C32-AS>
-        </C32-AS>
-        <C32-CO>
-        </C32-CO>
-        <C32-LD>
-        </C32-LD>
-        <C32CPP>
-        </C32CPP>
-        <C32Global>
-        </C32Global>
-      </item>
-      <item path="C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Navigation.h"
-            ex="true"
-            overriding="false">
-      </item>
-      <item path="C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/TapeSensor.h"
-            ex="true"
-            overriding="false">
-        <C32>
-        </C32>
-        <C32-AR>
-        </C32-AR>
-        <C32-AS>
-        </C32-AS>
-        <C32-CO>
-        </C32-CO>
-        <C32-LD>
-        </C32-LD>
-        <C32CPP>
-        </C32CPP>
-        <C32Global>
-        </C32Global>
-      </item>
->>>>>>> Stashed changes
     </conf>
   </confs>
 </configurationDescriptor>
