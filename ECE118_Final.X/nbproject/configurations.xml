@@ -4,16 +4,18 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Bumper.h</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/ES_Configure.h</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Motor.h</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Navigation.h</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/TapeSensor.h</itemPath>
       <itemPath>C:/ECE118/include/AD.h</itemPath>
       <itemPath>C:/ECE118/include/BOARD.h</itemPath>
       <itemPath>C:/ECE118/include/IO_Ports.h</itemPath>
       <itemPath>C:/ECE118/include/pwm.h</itemPath>
       <itemPath>C:/ECE118/include/serial.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Servo.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Bumper.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/ES_Configure.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Motor.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Navigation.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/TapeSensor.h</itemPath>
+      <itemPath>C:/ECE118/include/RC_Servo.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -28,20 +30,23 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Bumper.c</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Motor.c</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/Navigation.c</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/TapeSensor.c</itemPath>
-      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/Repair.X/main.c</itemPath>
       <itemPath>C:/ECE118/src/AD.c</itemPath>
       <itemPath>C:/ECE118/src/BOARD.c</itemPath>
       <itemPath>C:/ECE118/src/pwm.c</itemPath>
       <itemPath>C:/ECE118/src/serial.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Servo.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Bumper.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Motor.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Navigation.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/TapeSensor.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/main.c</itemPath>
+      <itemPath>C:/ECE118/src/RC_Servo.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
     <Elem>C:\Users\Ben\Documents\UCSC\ECE-118\Repair.X</Elem>
     <Elem>C:\ECE118</Elem>
+    <Elem>C:\Users\Ben\Documents\UCSC\ECE-118\ECE118_Final\ECE118_Final.X</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

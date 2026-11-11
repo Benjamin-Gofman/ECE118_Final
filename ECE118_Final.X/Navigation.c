@@ -9,16 +9,20 @@
 #include "TapeSensor.h"
 #include "Bumper.h"
 #include "Navigation.h"
+#include "Servo.h"
 
-#define DRIVE_PWM         300u // 30% PWM
-#define SLOW_PWM          150u // 15% PWM
-#define TURN_MS           600u // 600 ms
-#define BACKUP_MS         600u // 600 ms
-#define FORWARD_MS       1000u // 1 s
-#define SCAN_MS          1200u // 1.2 s
-#define SAMPLE_MS          10u // 10 ms
-#define TICKS_PER_MS    40000u // Core timer at an 80 MHz system clock
-#define BALL_ROLL_MS     1000u // Wait for the ball to roll down the slide
+#define DRIVE_PWM             300u // 30% PWM
+#define SLOW_PWM              150u // 15% PWM
+#define TURN_MS               600u // 600 ms
+#define BACKUP_MS             600u // 600 ms
+#define FORWARD_MS           1000u // 1 s
+#define SCAN_MS              1200u // 1.2 s
+#define SAMPLE_MS              10u // 10 ms
+#define TICKS_PER_MS        40000u // Core timer at an 80 MHz system clock
+#define BALL_ROLL_MS         1000u // Wait for the ball to roll down the slide
+#define FEED_OPEN_MS          300u // Time for ball to pass the servo
+#define FEED_CLOSE_MS         300u // Time for servo to close
+#define OPPONENT_FEED_GAP_MS 1000u // Wait between feeds
 
 typedef enum {
     FIND_TAPE,
@@ -37,6 +41,7 @@ typedef enum {
 
 typedef enum {
     BACK_UP,
+    SHOOT_OPPONENT,
     GO_RIGHT,
     GO_FORWARD,
     GO_LEFT
@@ -46,10 +51,11 @@ static MovementState movement = FIND_TAPE;
 static LineState lineState = DRIVE_FORWARD;
 static BumperState bumperState = BACK_UP;
 
-static unsigned int stepStart;
+static unsigned int stepStart; // Timer count
 static unsigned int towerCount = 0;
 static unsigned char bannerSeen = 0;
 static unsigned char opponentShots = 0;
+static unsigned char ballReleased = 0;
 
 static unsigned char TimePassed(unsigned int now, unsigned int milliseconds) {
     // Return 1 after the current movement step lasts long enough
@@ -133,27 +139,81 @@ static void StartBumperRecovery(unsigned int now) {
     stepStart = now;
 }
 
-static void ShootAtOpponent(void) {
-    // TODO: Add the ball release code
+static void Flywheel(unsigned char spin) {
+    // TODO: Turn the flywheel on for 1 and off for 0
+    (void) spin;
+}
+
+static unsigned char ShootAtOpponent(unsigned int now) {
+    static unsigned char feederOpen = 0;
+
+    // Start the flywheel before feeding the first ball
+    if (opponentShots == 0 && !feederOpen) {
+        Flywheel(1);
+    }
+
+    // Close the servo after the ball passes
+    if (feederOpen && TimePassed(now, FEED_OPEN_MS)) {
+        Servo3_Close();
+        feederOpen = 0;
+        opponentShots++;
+        stepStart = now;
+        return 0;
+    }
+
+    // Wait for the servo to close and delay before feeding the 2nd ball
+    if (feederOpen ||
+            (opponentShots == 1 && !TimePassed(now, OPPONENT_FEED_GAP_MS))) {
+        return 0;
+    }
+
+    // Open the servo
+    if (opponentShots < 2) {
+        Servo3_Open();
+        feederOpen = 1;
+        stepStart = now;
+        return 0;
+    }
+
+    // Close the servo before turning off the flywheel
+    if (!TimePassed(now, FEED_CLOSE_MS)) {
+        return 0;
+    }
+
+    Flywheel(0);
+    return 1;
 }
 
 static void RunBumperRecovery(unsigned int now) {
     switch (bumperState) {
         case BACK_UP:
             if (TimePassed(now, BACKUP_MS)) {
-                // Stop backing up and release the ball
+                // Back up then stop
                 Motor_Stop();
-                ShootAtOpponent();
-
-                // Set both motors forward and start the right turn
-                Motor_SetLeftDirection(FORWARD);
-                Motor_SetRightDirection(FORWARD);
-                Motor_SetLeftSpeed(SLOW_PWM);
-                Motor_SetRightSpeed(0);
-                bumperState = GO_RIGHT;
-                // Start the right-turn timer
-                stepStart = now;
+                bumperState = SHOOT_OPPONENT;
             }
+            break;
+
+        case SHOOT_OPPONENT:
+            // Wait until both balls have been shot
+            if (!ShootAtOpponent(now)) {
+                break;
+            }
+
+            // Finish the run if both parameters are met
+            if (towerCount >= 2) {
+                movement = DONE;
+                break;
+            }
+
+            // Set both motors forward and start the right turn
+            Motor_SetLeftDirection(FORWARD);
+            Motor_SetRightDirection(FORWARD);
+            Motor_SetLeftSpeed(SLOW_PWM);
+            Motor_SetRightSpeed(0);
+            bumperState = GO_RIGHT;
+            // Start the right-turn timer
+            stepStart = now;
             break;
 
         case GO_RIGHT:
@@ -186,27 +246,30 @@ static void RunBumperRecovery(unsigned int now) {
     }
 }
 
-static unsigned char ReleaseBallAtTower(void) {
-    // TODO: Lower the bridge and let the ball roll into the tower
-    return 0;
-}
-
 static void RunTower(unsigned int now) {
-    // Stay stopped while the ball rolls down the slide
     Motor_Stop();
 
-    // Wait until the ball roll timer expires before continuing
-    if (!TimePassed(now, BALL_ROLL_MS)) {
+    if (!ballReleased && TimePassed(now, FEED_OPEN_MS)) {
+        // Close the feeder after giving one ball time to pass
+        Servo2_Close();
+        ballReleased = 1;
+        stepStart = now;
+    }
+
+    // Wait for the ball to roll down the slide
+    if (!ballReleased || !TimePassed(now, FEED_CLOSE_MS + BALL_ROLL_MS)) {
         return;
     }
 
-    // Increment tower count
     towerCount++;
+
+    // Reset for the next tower
+    ballReleased = 0;
 
     if (towerCount >= 2 && opponentShots >= 2) {
         movement = DONE;
     } else if (towerCount >= 2) {
-        // Start timing the opponent search
+        // Time the opponent search
         stepStart = now;
         movement = FIND_OPPONENT;
     } else {
@@ -286,7 +349,8 @@ static void UpdateNavigation(unsigned int now) {
         // TOP goes LOW after losing the banner
         bannerSeen = 0;
         Motor_Stop();
-        ReleaseBallAtTower();
+        Servo1_Open();
+        Servo2_Open();
         stepStart = now;
         movement = SHOOT_AT_TOWER;
         return;
