@@ -16,6 +16,8 @@
       <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Navigation.h</itemPath>
       <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/TapeSensor.h</itemPath>
       <itemPath>C:/ECE118/include/RC_Servo.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Opponent.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Flywheel.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -41,6 +43,8 @@
       <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/TapeSensor.c</itemPath>
       <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/main.c</itemPath>
       <itemPath>C:/ECE118/src/RC_Servo.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Opponent.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Flywheel.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

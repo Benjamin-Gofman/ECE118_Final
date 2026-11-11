@@ -10,19 +10,22 @@
 #include "Bumper.h"
 #include "Navigation.h"
 #include "Servo.h"
+#include "Opponent.h"
+#include "Flywheel.h"
 
 #define DRIVE_PWM             300u // 30% PWM
 #define SLOW_PWM              150u // 15% PWM
 #define TURN_MS               600u // 600 ms
 #define BACKUP_MS             600u // 600 ms
 #define FORWARD_MS           1000u // 1 s
-#define SCAN_MS              1200u // 1.2 s
+#define SCAN_MS              1200u // 360-degree turn
 #define SAMPLE_MS              10u // 10 ms
 #define TICKS_PER_MS        40000u // Core timer at an 80 MHz system clock
 #define BALL_ROLL_MS         1000u // Wait for the ball to roll down the slide
 #define FEED_OPEN_MS          300u // Time for ball to pass the servo
 #define FEED_CLOSE_MS         300u // Time for servo to close
 #define OPPONENT_FEED_GAP_MS 1000u // Wait between feeds
+#define FLYWHEEL_SPINUP_MS    500u // Get it steadily spinning
 
 typedef enum {
     FIND_TAPE,
@@ -30,7 +33,8 @@ typedef enum {
     BUMPED,
     SHOOT_AT_TOWER,
     FIND_OPPONENT,
-    DONE
+    DONE,
+    APPROACH_OPPONENT
 } MovementState;
 
 typedef enum {
@@ -139,17 +143,22 @@ static void StartBumperRecovery(unsigned int now) {
     stepStart = now;
 }
 
-static void Flywheel(unsigned char spin) {
-    // TODO: Turn the flywheel on for 1 and off for 0
-    (void) spin;
-}
-
 static unsigned char ShootAtOpponent(unsigned int now) {
     static unsigned char feederOpen = 0;
+    static unsigned char flywheelStarted = 0;
 
     // Start the flywheel before feeding the first ball
-    if (opponentShots == 0 && !feederOpen) {
-        Flywheel(1);
+    if (opponentShots == 0 && !flywheelStarted) {
+        Flywheel_Start();
+        flywheelStarted = 1;
+        stepStart = now;
+        return 0;
+    }
+
+    // Wait for spin-up before feeding the first ball
+    if (opponentShots == 0 && !feederOpen &&
+            !TimePassed(now, FLYWHEEL_SPINUP_MS)) {
+        return 0;
     }
 
     // Close the servo after the ball passes
@@ -180,7 +189,8 @@ static unsigned char ShootAtOpponent(unsigned int now) {
         return 0;
     }
 
-    Flywheel(0);
+    Flywheel_Stop();
+    flywheelStarted = 0;
     return 1;
 }
 
@@ -270,30 +280,11 @@ static void RunTower(unsigned int now) {
         movement = DONE;
     } else if (towerCount >= 2) {
         // Time the opponent search
+        Opponent_StartSearch();
         stepStart = now;
         movement = FIND_OPPONENT;
     } else {
         movement = FOLLOW_TAPE;
-    }
-}
-
-static unsigned char OpponentBeaconDetected(void) {
-    // TODO: Read the beacon detector
-    return 0;
-}
-
-static void SearchForOpponent(unsigned int now) {
-    if (OpponentBeaconDetected()) {
-        // Drive toward the beacon
-        Motor_SetLeftSpeed(SLOW_PWM);
-        Motor_SetRightSpeed(SLOW_PWM);
-    } else if (TimePassed(now, SCAN_MS)) {
-        // Stop if the scan ends without a beacon
-        Motor_Stop();
-    } else {
-        // Turn right and look again
-        Motor_SetLeftSpeed(SLOW_PWM);
-        Motor_SetRightSpeed(0);
     }
 }
 
@@ -323,7 +314,21 @@ static void UpdateNavigation(unsigned int now) {
     }
 
     if (movement == FIND_OPPONENT) {
-        SearchForOpponent(now);
+        // Stop scan if beacon detected or timer runs out
+        OpponentSearchResult result = SearchOpponent(TimePassed(now, SCAN_MS));
+
+        if (result == OPPONENT_FOUND) {
+            movement = APPROACH_OPPONENT;
+        } else if (result == OPPONENT_NOT_FOUND) {
+            movement = DONE;
+        }
+        return;
+    }
+
+    if (movement == APPROACH_OPPONENT) {
+        // Drive toward the opponent until the bumper is pressed
+        Motor_SetLeftSpeed(SLOW_PWM);
+        Motor_SetRightSpeed(SLOW_PWM);
         return;
     }
 

@@ -56,11 +56,6 @@ char TapeSensor_CheckTape(unsigned int readings[6], unsigned char onTape[6]) {
 }
 
 unsigned char TapeSensor_CheckBanner(void) {
-    if (TOP == 1) {
-        // HIGH = banner detected
-        return 1;
-    } else {
-        // LOW = no banner detected
-        return 0;
-    }
+    // Return 1 if HIGH and 0 if LOW
+    return TOP;
 }
