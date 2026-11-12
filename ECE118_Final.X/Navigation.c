@@ -9,20 +9,20 @@
 #include "TapeSensor.h"
 #include "Bumper.h"
 #include "Navigation.h"
+#include "ES_Framework.h"
 #include "Servo.h"
 #include "Opponent.h"
 #include "Flywheel.h"
 
 #define DRIVE_PWM             300u // 30% PWM
 #define SLOW_PWM              150u // 15% PWM
-#define TURN_MS               600u // 600 ms
-#define BACKUP_MS             600u // 600 ms
-#define FORWARD_MS           1000u // 1 s
+#define BACKUP_MS             600u // Back up duration
+#define TURN_MS               600u // Recovery turn duration
+#define FORWARD_MS           1000u // Recovery forward duration
 #define SCAN_MS              1200u // 360-degree turn
-#define SAMPLE_MS              10u // 10 ms
-#define TICKS_PER_MS        40000u // Core timer at an 80 MHz system clock
+#define SAMPLE_MS              10u // Navigation update interval
 #define BALL_ROLL_MS         1000u // Wait for the ball to roll down the slide
-#define FEED_OPEN_MS          300u // Time for ball to pass the servo
+#define FEED_OPEN_MS          300u // Time for 1 ball to pass the servo
 #define FEED_CLOSE_MS         300u // Time for servo to close
 #define OPPONENT_FEED_GAP_MS 1000u // Wait between feeds
 #define FLYWHEEL_SPINUP_MS    500u // Get it steadily spinning
@@ -60,10 +60,11 @@ static unsigned int towerCount = 0;
 static unsigned char bannerSeen = 0;
 static unsigned char opponentShots = 0;
 static unsigned char ballReleased = 0;
+static uint8_t navigationPriority;
 
-static unsigned char TimePassed(unsigned int now, unsigned int milliseconds) {
+static unsigned char TimePassed(unsigned int now, uint32_t milliseconds) {
     // Return 1 after the current movement step lasts long enough
-    return (unsigned int) (now - stepStart) >= milliseconds * TICKS_PER_MS;
+    return (uint32_t) (now - stepStart) >= milliseconds;
 }
 
 static void FindingTape(unsigned char onTape[6]) {
@@ -126,7 +127,11 @@ static void TapeFollowing(unsigned char onTape[6]) {
     }
 }
 
-static void StartBumperRecovery(unsigned int now) {
+static void StartBumperRecovery(uint32_t now) {
+    // Stop shooting 
+    Flywheel_Stop();
+    Servo2_Close();
+    Servo3_Close();
     // Forget the banner
     bannerSeen = 0;
     movement = BUMPED;
@@ -143,7 +148,7 @@ static void StartBumperRecovery(unsigned int now) {
     stepStart = now;
 }
 
-static unsigned char ShootAtOpponent(unsigned int now) {
+static unsigned char ShootAtOpponent(uint32_t now) {
     static unsigned char feederOpen = 0;
     static unsigned char flywheelStarted = 0;
 
@@ -161,7 +166,7 @@ static unsigned char ShootAtOpponent(unsigned int now) {
         return 0;
     }
 
-    // Close the servo after the ball passes
+    // Close servo after ball passes
     if (feederOpen && TimePassed(now, FEED_OPEN_MS)) {
         Servo3_Close();
         feederOpen = 0;
@@ -194,7 +199,7 @@ static unsigned char ShootAtOpponent(unsigned int now) {
     return 1;
 }
 
-static void RunBumperRecovery(unsigned int now) {
+static void RunBumperRecovery(uint32_t now) {
     switch (bumperState) {
         case BACK_UP:
             if (TimePassed(now, BACKUP_MS)) {
@@ -288,7 +293,7 @@ static void RunTower(unsigned int now) {
     }
 }
 
-static void UpdateNavigation(unsigned int now) {
+static void UpdateNavigation(uint32_t now) {
     unsigned int readings[6];
     unsigned char onTape[6];
     unsigned char banner = TapeSensor_CheckBanner();
@@ -305,11 +310,6 @@ static void UpdateNavigation(unsigned int now) {
 
     if (movement == SHOOT_AT_TOWER) {
         RunTower(now);
-        return;
-    }
-
-    if (Bumper_IsPressed()) {
-        StartBumperRecovery(now);
         return;
     }
 
@@ -364,17 +364,66 @@ static void UpdateNavigation(unsigned int now) {
     TapeFollowing(onTape);
 }
 
-void RunNavigation(void) {
-    // Save the current timer count
-    unsigned int lastSample = _CP0_GET_COUNT();
+/* ES_CheckEvents.c, detects bumper presses and posts events */
+uint8_t CheckNavigationEvents(void) {
+    static uint8_t lastPressed = 0u; // Previous bumper state
+    uint8_t pressed = Bumper_IsPressed() ? 1u : 0u; // Current state
 
-    while (1) {
-        unsigned int now = _CP0_GET_COUNT();
+    // Detect a new bumper press
+    if (pressed && !lastPressed) {
+        ES_Event event = {NAV_BUMPER_PRESSED, 0u};
 
-        // Read the sensors and update movement every 10 ms
-        if ((unsigned int) (now - lastSample) >= SAMPLE_MS * TICKS_PER_MS) {
-            lastSample = now;
-            UpdateNavigation(now);
+        // Post event to Navigation and retry if the queue is full
+        if (!PostNavigation(event)) {
+            return 0u;
         }
+
+        lastPressed = pressed;
+        return 1u;
     }
+
+    // Save bumper state for next check
+    lastPressed = pressed;
+    return 0u;
+}
+
+/* ES_Framework.c, queues the startup event for Navigation */
+uint8_t InitNavigation(uint8_t priority) {
+    navigationPriority = priority;
+
+    return PostNavigation((ES_Event) {
+        ES_INIT, 0u
+    });
+}
+
+/* ES_Timers.c, sends timer events to Navigation queue */
+uint8_t PostNavigation(ES_Event event) {
+    return ES_PostToService(navigationPriority, event);
+}
+
+/* ES_Framework.c, handles startup, bumper events, and navigation updates */
+ES_Event RunNavigation(ES_Event event) {
+
+    // Initialize the 10 ms navigation timer
+    if (event.EventType == ES_INIT) {
+        ES_Timer_InitTimer(NAV_TIMER, SAMPLE_MS);
+
+        // Handle bumper press event
+    } else if (event.EventType == NAV_BUMPER_PRESSED) {
+        // Start recovery if not already recovering
+        if (movement != BUMPED) {
+            StartBumperRecovery(ES_Timer_GetTime());
+        }
+
+        // Update navigation every 10 ms and restart the timer
+    } else if (event.EventType == ES_TIMEOUT &&
+            event.EventParam == NAV_TIMER) {
+        UpdateNavigation(ES_Timer_GetTime());
+        ES_Timer_InitTimer(NAV_TIMER, SAMPLE_MS);
+    }
+
+    /* No additional events to process */
+    return (ES_Event) {
+        ES_NO_EVENT, 0u
+    };
 }

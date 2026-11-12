@@ -4,7 +4,6 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>C:/ECE118/include/AD.h</itemPath>
       <itemPath>C:/ECE118/include/BOARD.h</itemPath>
       <itemPath>C:/ECE118/include/IO_Ports.h</itemPath>
       <itemPath>C:/ECE118/include/pwm.h</itemPath>
@@ -18,6 +17,9 @@
       <itemPath>C:/ECE118/include/RC_Servo.h</itemPath>
       <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Opponent.h</itemPath>
       <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Flywheel.h</itemPath>
+      <itemPath>C:/ECE118/include/ES_Framework.h</itemPath>
+      <itemPath>C:/ECE118/include/ES_ServiceHeaders.h</itemPath>
+      <itemPath>C:/ECE118/include/ES_Events.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -32,7 +34,6 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>C:/ECE118/src/AD.c</itemPath>
       <itemPath>C:/ECE118/src/BOARD.c</itemPath>
       <itemPath>C:/ECE118/src/pwm.c</itemPath>
       <itemPath>C:/ECE118/src/serial.c</itemPath>
@@ -45,6 +46,10 @@
       <itemPath>C:/ECE118/src/RC_Servo.c</itemPath>
       <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Opponent.c</itemPath>
       <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Flywheel.c</itemPath>
+      <itemPath>C:/ECE118/src/ES_Framework.c</itemPath>
+      <itemPath>C:/ECE118/src/ES_Timers.c</itemPath>
+      <itemPath>C:/ECE118/src/ES_Queue.c</itemPath>
+      <itemPath>C:/ECE118/src/ES_CheckEvents.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -130,7 +135,7 @@
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros" value="DISABLE_ADINIT"/>
         <property key="scalar-model" value="default"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>

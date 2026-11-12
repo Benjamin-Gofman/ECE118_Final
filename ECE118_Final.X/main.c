@@ -9,7 +9,8 @@
 #include "Servo.h"
 #include "Opponent.h"
 #include "Flywheel.h"
-#include "Navigation.h"
+#include "ES_Configure.h"
+#include "ES_Framework.h"
     
 int main(void) {
     BOARD_Init();
@@ -23,8 +24,15 @@ int main(void) {
     // Set both motor directions forward
     Motor_SetLeftDirection(FORWARD);
     Motor_SetRightDirection(FORWARD);
+    
+    // Run the framework if all services initialize successfully
+    if (ES_Initialize() == Success) {
+        ES_Run();
+    }
+    
+    // Stop all motors if the initialization fails
+    Motor_Stop();
+    Flywheel_Stop();
 
-    RunNavigation();
-
-    return 0;
+    return 1;
 }
