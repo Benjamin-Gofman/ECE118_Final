@@ -3,8 +3,8 @@
 
 #include <IO_Ports.h>
 
-#define BEACON_TRIS  PORTZ04_TRIS
-#define BEACON_INPUT PORTZ04_BIT
+#define BEACON_TRIS  PORTW06_TRIS
+#define BEACON_INPUT PORTW06_BIT
 
 #define SCAN_LIMIT_DEG  360u  // Max right turn
 #define SCAN_PWM        150u  // Wheel speed during the scan

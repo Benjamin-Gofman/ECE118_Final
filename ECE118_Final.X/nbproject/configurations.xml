@@ -20,6 +20,7 @@
       <itemPath>C:/ECE118/include/ES_Framework.h</itemPath>
       <itemPath>C:/ECE118/include/ES_ServiceHeaders.h</itemPath>
       <itemPath>C:/ECE118/include/ES_Events.h</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Linefollowing.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -50,6 +51,7 @@
       <itemPath>C:/ECE118/src/ES_Timers.c</itemPath>
       <itemPath>C:/ECE118/src/ES_Queue.c</itemPath>
       <itemPath>C:/ECE118/src/ES_CheckEvents.c</itemPath>
+      <itemPath>C:/Users/Ben/Documents/UCSC/ECE-118/ECE118_Final/ECE118_Final.X/Linefollowing.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

@@ -13,12 +13,10 @@
 #include "Servo.h"
 #include "Opponent.h"
 #include "Flywheel.h"
+#include "LineFollowing.h"
 
 #define DRIVE_PWM             300u // 30% PWM
 #define SLOW_PWM              150u // 15% PWM
-#define BACKUP_MS             600u // Back up duration
-#define TURN_MS               600u // Recovery turn duration
-#define FORWARD_MS           1000u // Recovery forward duration
 #define SCAN_MS              1200u // 360-degree turn
 #define SAMPLE_MS              10u // Navigation update interval
 #define BALL_ROLL_MS         1000u // Wait for the ball to roll down the slide
@@ -37,23 +35,7 @@ typedef enum {
     APPROACH_OPPONENT
 } MovementState;
 
-typedef enum {
-    DRIVE_FORWARD,
-    ADJUST,
-    TURN_RIGHT
-} LineState;
-
-typedef enum {
-    BACK_UP,
-    SHOOT_OPPONENT,
-    GO_RIGHT,
-    GO_FORWARD,
-    GO_LEFT
-} BumperState;
-
 static MovementState movement = FIND_TAPE;
-static LineState lineState = DRIVE_FORWARD;
-static BumperState bumperState = BACK_UP;
 
 static unsigned int stepStart; // Timer count
 static unsigned int towerCount = 0;
@@ -61,6 +43,8 @@ static unsigned char bannerSeen = 0;
 static unsigned char opponentShots = 0;
 static unsigned char ballReleased = 0;
 static uint8_t navigationPriority;
+static unsigned char feederOpen = 0;
+static unsigned char flywheelStarted = 0;
 
 static unsigned char TimePassed(unsigned int now, uint32_t milliseconds) {
     // Return 1 after the current movement step lasts long enough
@@ -78,80 +62,7 @@ static void FindingTape(unsigned char onTape[6]) {
     }
 }
 
-static void TapeFollowing(unsigned char onTape[6]) {
-    unsigned char frontMiddle = onTape[1];
-    unsigned char backMiddle = onTape[4];
-
-    // Change state if it gets lost
-    if (!frontMiddle && !backMiddle) {
-        movement = FIND_TAPE;
-        return;
-    }
-
-    // Both middle sensors see black tape
-    if (frontMiddle && backMiddle) {
-        lineState = DRIVE_FORWARD;
-    } else if (frontMiddle) {
-        // Adjust so the rear middle sensor sees black
-        lineState = ADJUST;
-    } else {
-        // Turn right when the front middle sensor goes LOW
-        lineState = TURN_RIGHT;
-    }
-
-    switch (lineState) {
-        case DRIVE_FORWARD:
-            Motor_SetLeftSpeed(DRIVE_PWM);
-            Motor_SetRightSpeed(DRIVE_PWM);
-            break;
-
-        case ADJUST:
-            // Use the outer rear sensors to pick a direction
-            if (onTape[3] && !onTape[5]) {
-                Motor_SetLeftSpeed(0);
-                Motor_SetRightSpeed(SLOW_PWM);
-            } else if (onTape[5] && !onTape[3]) {
-                Motor_SetLeftSpeed(SLOW_PWM);
-                Motor_SetRightSpeed(0);
-            } else {
-                // Advance slowly when neither side gives a clear direction
-                Motor_SetLeftSpeed(SLOW_PWM);
-                Motor_SetRightSpeed(SLOW_PWM);
-            }
-            break;
-
-        case TURN_RIGHT:
-            Motor_SetLeftSpeed(SLOW_PWM);
-            Motor_SetRightSpeed(0);
-            break;
-    }
-}
-
-static void StartBumperRecovery(uint32_t now) {
-    // Stop shooting 
-    Flywheel_Stop();
-    Servo2_Close();
-    Servo3_Close();
-    // Forget the banner
-    bannerSeen = 0;
-    movement = BUMPED;
-    bumperState = BACK_UP;
-
-    // Stop and back up
-    Motor_Stop();
-    Motor_SetLeftDirection(REVERSE);
-    Motor_SetRightDirection(REVERSE);
-    Motor_SetLeftSpeed(SLOW_PWM);
-    Motor_SetRightSpeed(SLOW_PWM);
-
-    // Start the backup timer
-    stepStart = now;
-}
-
 static unsigned char ShootAtOpponent(uint32_t now) {
-    static unsigned char feederOpen = 0;
-    static unsigned char flywheelStarted = 0;
-
     // Start the flywheel before feeding the first ball
     if (opponentShots == 0 && !flywheelStarted) {
         Flywheel_Start();
@@ -199,68 +110,6 @@ static unsigned char ShootAtOpponent(uint32_t now) {
     return 1;
 }
 
-static void RunBumperRecovery(uint32_t now) {
-    switch (bumperState) {
-        case BACK_UP:
-            if (TimePassed(now, BACKUP_MS)) {
-                // Back up then stop
-                Motor_Stop();
-                bumperState = SHOOT_OPPONENT;
-            }
-            break;
-
-        case SHOOT_OPPONENT:
-            // Wait until both balls have been shot
-            if (!ShootAtOpponent(now)) {
-                break;
-            }
-
-            // Finish the run if both parameters are met
-            if (towerCount >= 2) {
-                movement = DONE;
-                break;
-            }
-
-            // Set both motors forward and start the right turn
-            Motor_SetLeftDirection(FORWARD);
-            Motor_SetRightDirection(FORWARD);
-            Motor_SetLeftSpeed(SLOW_PWM);
-            Motor_SetRightSpeed(0);
-            bumperState = GO_RIGHT;
-            // Start the right-turn timer
-            stepStart = now;
-            break;
-
-        case GO_RIGHT:
-            if (TimePassed(now, TURN_MS)) {
-                // Start driving forward with both wheels
-                Motor_SetRightSpeed(SLOW_PWM);
-                bumperState = GO_FORWARD;
-                // Start the forward timer
-                stepStart = now;
-            }
-            break;
-
-        case GO_FORWARD:
-            if (TimePassed(now, FORWARD_MS)) {
-                // Stop the left wheel to turn left
-                Motor_SetLeftSpeed(0);
-                bumperState = GO_LEFT;
-                // Start the left-turn timer
-                stepStart = now;
-            }
-            break;
-
-        case GO_LEFT:
-            if (TimePassed(now, TURN_MS)) {
-                // Finish recovery and look for tape 
-                Motor_Stop();
-                movement = FIND_TAPE;
-            }
-            break;
-    }
-}
-
 static void RunTower(unsigned int now) {
     Motor_Stop();
 
@@ -304,7 +153,13 @@ static void UpdateNavigation(uint32_t now) {
     }
 
     if (movement == BUMPED) {
-        RunBumperRecovery(now);
+        // Shoot at the opponent after backing up
+        if (Bumper_IsShooting() && ShootAtOpponent(now)) {
+            Bumper_ShootingComplete(now);
+        } else if (!Bumper_IsShooting() && RunBumperRecovery(now)) {
+            // Finish recovery then look for tape
+            movement = FIND_TAPE;
+        }
         return;
     }
 
@@ -315,9 +170,12 @@ static void UpdateNavigation(uint32_t now) {
 
     if (movement == FIND_OPPONENT) {
         // Stop scan if beacon detected or timer runs out
-        OpponentSearchResult result = SearchOpponent(TimePassed(now, SCAN_MS));
+        OpponentSearchResult result = SearchOpponent(
+                TimePassed(now, SCAN_MS) ? SCAN_LIMIT_DEG : 0u);
 
         if (result == OPPONENT_FOUND) {
+            Motor_SetLeftDirection(FORWARD);
+            Motor_SetRightDirection(FORWARD);
             movement = APPROACH_OPPONENT;
         } else if (result == OPPONENT_NOT_FOUND) {
             movement = DONE;
@@ -326,7 +184,7 @@ static void UpdateNavigation(uint32_t now) {
     }
 
     if (movement == APPROACH_OPPONENT) {
-        // Drive toward the opponent until the bumper is pressed
+        // Drive toward the opponent until bumper is pressed
         Motor_SetLeftSpeed(SLOW_PWM);
         Motor_SetRightSpeed(SLOW_PWM);
         return;
@@ -361,7 +219,13 @@ static void UpdateNavigation(uint32_t now) {
         return;
     }
 
-    TapeFollowing(onTape);
+    // Return to tape search if both middle sensors lose the line
+    if (!onTape[1] && !onTape[4]) {
+        movement = FIND_TAPE;
+        return;
+    }
+
+    LineFollowing(onTape);
 }
 
 /* ES_CheckEvents.c, detects bumper presses and posts events */
@@ -411,7 +275,17 @@ ES_Event RunNavigation(ES_Event event) {
         // Handle bumper press event
     } else if (event.EventType == NAV_BUMPER_PRESSED) {
         // Start recovery if not already recovering
-        if (movement != BUMPED) {
+        if (movement != BUMPED && movement != DONE) {
+            // Stop shooting
+            Flywheel_Stop();
+            Servo2_Close();
+            Servo3_Close();
+            feederOpen = 0;
+            flywheelStarted = 0;
+            // Forget the banner
+            bannerSeen = 0;
+
+            movement = BUMPED;
             StartBumperRecovery(ES_Timer_GetTime());
         }
 
