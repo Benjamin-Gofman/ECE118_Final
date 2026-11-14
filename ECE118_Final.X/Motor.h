@@ -5,11 +5,11 @@
 #define REVERSE 0
 
 // Initialize motor pins and PWM
-char Motor_Init(void);
+void Motor_Init(void);
 
 // Set motor directions
-void Motor_SetLeftDirection(unsigned int forward);
-void Motor_SetRightDirection(unsigned int forward);
+void Motor_SetLeftDirection(unsigned char forward);
+void Motor_SetRightDirection(unsigned char forward);
 
 // Set motor speeds from 0 to 1000 PWM
 void Motor_SetLeftSpeed(unsigned int speed);

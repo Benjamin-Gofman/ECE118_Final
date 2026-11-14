@@ -15,8 +15,8 @@
 #include "Flywheel.h"
 #include "LineFollowing.h"
 
-#define DRIVE_PWM             300u // 30% PWM
-#define SLOW_PWM              150u // 15% PWM
+#define DRIVE_PWM             600u // 60% PWM
+#define SLOW_PWM              400u // 40% PWM
 #define SCAN_MS              1200u // 360-degree turn
 #define SAMPLE_MS              10u // Navigation update interval
 #define BALL_ROLL_MS         1000u // Wait for the ball to roll down the slide
@@ -57,6 +57,8 @@ static void FindingTape(unsigned char onTape[6]) {
         movement = FOLLOW_TAPE;
     } else {
         // Keep driving forward
+        Motor_SetLeftDirection(FORWARD);
+        Motor_SetRightDirection(FORWARD);
         Motor_SetLeftSpeed(DRIVE_PWM);
         Motor_SetRightSpeed(DRIVE_PWM);
     }
@@ -64,7 +66,7 @@ static void FindingTape(unsigned char onTape[6]) {
 
 static unsigned char ShootAtOpponent(uint32_t now) {
     // Start the flywheel before feeding the first ball
-    if (opponentShots == 0 && !flywheelStarted) {
+    if (opponentShots < 2 && !flywheelStarted) {
         Flywheel_Start();
         flywheelStarted = 1;
         stepStart = now;
@@ -158,6 +160,8 @@ static void UpdateNavigation(uint32_t now) {
             Bumper_ShootingComplete(now);
         } else if (!Bumper_IsShooting() && RunBumperRecovery(now)) {
             // Finish recovery then look for tape
+            Motor_SetLeftDirection(FORWARD);
+            Motor_SetRightDirection(FORWARD);
             movement = FIND_TAPE;
         }
         return;
@@ -211,17 +215,24 @@ static void UpdateNavigation(uint32_t now) {
     } else if (bannerSeen) {
         // TOP goes LOW after losing the banner
         bannerSeen = 0;
-        Motor_Stop();
-        Servo1_Open();
-        Servo2_Open();
-        stepStart = now;
-        movement = SHOOT_AT_TOWER;
+        if (towerCount < 2) {
+
+            Motor_Stop();
+            Servo1_Open();
+            Servo2_Open();
+            stepStart = now;
+            movement = SHOOT_AT_TOWER;
+        }
         return;
     }
 
-    // Return to tape search if both middle sensors lose the line
-    if (!onTape[1] && !onTape[4]) {
+    // Drive straight if all three front sensors see white
+    if (!onTape[0] && !onTape[1] && !onTape[2]) {
         movement = FIND_TAPE;
+        Motor_SetLeftDirection(FORWARD);
+        Motor_SetRightDirection(FORWARD);
+        Motor_SetLeftSpeed(DRIVE_PWM);
+        Motor_SetRightSpeed(DRIVE_PWM);
         return;
     }
 
@@ -282,6 +293,7 @@ ES_Event RunNavigation(ES_Event event) {
             Servo3_Close();
             feederOpen = 0;
             flywheelStarted = 0;
+            ballReleased = 0;
             // Forget the banner
             bannerSeen = 0;
 

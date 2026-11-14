@@ -16,12 +16,9 @@
  * Connect all grounds together.
  */
 
-#include <stdio.h>
 #include <xc.h>
-#include <BOARD.h>
-#include <pwm.h>
 #include <IO_Ports.h>
-#include <math.h>
+#include <pwm.h>
 #include "Motor.h"
 
 // Left motor pins
@@ -38,56 +35,63 @@
 #define RIGHT_IN4_TRIS PORTY09_TRIS
 #define RIGHT_IN4_LAT  PORTY09_LAT
 
-char Motor_Init(void) {
-    // Initialize PWM for both motors
-    if (PWM_Init() == ERROR) {
-        printf("\n\rERROR: PWM_Init");
-        return ERROR;
-    }
-
-    // Add PWM pins for left and right motors
-    if (PWM_AddPins(LEFT_PWM | RIGHT_PWM) == ERROR) {
-        printf("\n\rERROR: PWM_AddPins");
-        return ERROR;
-    }
-
-    // Initialize: motors = stopped, direction = forward
-    Motor_Stop();
-    Motor_SetLeftDirection(FORWARD);
-    Motor_SetRightDirection(FORWARD);
-
+void Motor_Init(void) {
     // Set all direction pins as outputs
     LEFT_IN1_TRIS = 0;
     LEFT_IN2_TRIS = 0;
     RIGHT_IN3_TRIS = 0;
     RIGHT_IN4_TRIS = 0;
 
-    return SUCCESS;
+    // Initialize direction inputs
+    LEFT_IN1_LAT = 0;
+    LEFT_IN2_LAT = 0;
+    RIGHT_IN3_LAT = 0;
+    RIGHT_IN4_LAT = 0;
+
+    // Initialize PWM for both motors
+    PWM_Init();
+    PWM_SetFrequency(1000);
+
+    // Add PWM pins for left and right motors
+    PWM_AddPins(LEFT_PWM | RIGHT_PWM);
+
+    // Start with both motors stopped
+    PWM_SetDutyCycle(LEFT_PWM, 0);
+    PWM_SetDutyCycle(RIGHT_PWM, 0);
 }
 
-void Motor_SetLeftDirection(unsigned int forward) {
-    // Turn off left motor
-    PWM_SetDutyCycle(LEFT_PWM, 0);
+void Motor_SetLeftDirection(unsigned char forward) {
     // 10 = forward, 01 = reverse
     LEFT_IN1_LAT = forward;
     LEFT_IN2_LAT = !forward;
 }
 
-void Motor_SetRightDirection(unsigned int forward) {
-    PWM_SetDutyCycle(RIGHT_PWM, 0);
+void Motor_SetRightDirection(unsigned char forward) {
+    // 10 = forward, 01 = reverse
     RIGHT_IN3_LAT = forward;
     RIGHT_IN4_LAT = !forward;
 }
 
 void Motor_SetLeftSpeed(unsigned int speed) {
-    PWM_SetDutyCycle(LEFT_PWM, fmin(speed, MAX_PWM)); // 1000
+    // Limit speed to 100% PWM
+    if (speed > MAX_PWM) {
+        speed = MAX_PWM;
+    }
+
+    PWM_SetDutyCycle(LEFT_PWM, speed);
 }
 
 void Motor_SetRightSpeed(unsigned int speed) {
-    PWM_SetDutyCycle(RIGHT_PWM, fmin(speed, MAX_PWM));
+    // Limit speed to 100% PWM
+    if (speed > MAX_PWM) {
+        speed = MAX_PWM;
+    }
+
+    PWM_SetDutyCycle(RIGHT_PWM, speed);
 }
 
 void Motor_Stop(void) {
+    // Stop both motors
     PWM_SetDutyCycle(LEFT_PWM, 0); // Left motor off
     PWM_SetDutyCycle(RIGHT_PWM, 0); // Right motor off
 }

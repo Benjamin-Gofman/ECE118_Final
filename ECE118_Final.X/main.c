@@ -21,6 +21,9 @@ int main(void) {
     Opponent_Init();
     Flywheel_Init();
 
+    Motor_SetLeftDirection(FORWARD);
+    Motor_SetRightDirection(FORWARD);
+
     // Run the framework if all services initialize successfully
     if (ES_Initialize() == Success) {
         ES_Run();
@@ -32,9 +35,7 @@ int main(void) {
 
     return 1;
 }
-//#include <BOARD.h>
-//#include "Motor.h"
-//
+
 //int main(void) {
 //    BOARD_Init();
 //    Motor_Init();
@@ -43,8 +44,9 @@ int main(void) {
 //    Motor_SetLeftDirection(FORWARD);
 //    Motor_SetRightDirection(FORWARD);
 //
-//    Motor_SetLeftSpeed(300);
-//    Motor_SetRightSpeed(300);
+//    // Run both motors at full speed
+//    Motor_SetLeftSpeed(400);
+//    Motor_SetRightSpeed(400);
 //
 //    while (1) {
 //        // Keep both motors running
