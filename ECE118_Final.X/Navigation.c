@@ -4,7 +4,6 @@
  */
 
 #include <xc.h>
-#include <cp0defs.h>
 #include "Motor.h"
 #include "TapeSensor.h"
 #include "Bumper.h"
