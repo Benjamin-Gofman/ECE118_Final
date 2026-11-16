@@ -31,6 +31,9 @@ unsigned char sim_tape_tris[7] = {0};
 
 static unsigned int pwm_left = 0, pwm_right = 0;
 static unsigned char dir_left = FORWARD, dir_right = FORWARD;
+static unsigned char sim_opponent_detected = 0;
+static unsigned char sim_bumper_pressed = 0;
+static unsigned char previous_bumper_pressed = 0;
 static uint32_t sim_clock_ms = 0;
 static uint32_t next_nav_timer_ms = 0;
 static unsigned char timer_active = 0;
@@ -59,7 +62,7 @@ uint8_t ES_PostToService(uint8_t priority, ES_Event event) {
 
 /* Not connected yet: physical bumper, servo, flywheel, and opponent beacon. */
 void Bumper_Init(void) {}
-unsigned char Bumper_IsPressed(void) { return 0; }
+unsigned char Bumper_IsPressed(void) { return sim_bumper_pressed; }
 void StartBumperRecovery(uint32_t now) { (void)now; }
 unsigned char Bumper_IsShooting(void) { return 0; }
 void Bumper_ShootingComplete(uint32_t now) { (void)now; }
@@ -76,16 +79,25 @@ void Servo3_Open(void) {} void Servo3_Close(void) {}
 void Flywheel_Init(void) {}
 void Flywheel_Start(void) {}
 void Flywheel_Stop(void) {}
-void Opponent_Init(void) {}
-unsigned char OpponentBeaconDetected(void) { return 0; }
-void Opponent_StartSearch(void) { Motor_Stop(); Motor_SetLeftDirection(FORWARD); Motor_SetRightDirection(REVERSE); }
-OpponentSearchResult SearchOpponent(unsigned int degrees) {
-    if (degrees >= SCAN_LIMIT_DEG) { Motor_Stop(); return OPPONENT_NOT_FOUND; }
-    Motor_SetLeftSpeed(SCAN_PWM); Motor_SetRightSpeed(SCAN_PWM);
-    return OPPONENT_SEARCHING;
+/* Opponent.c owns both the beacon interface and search algorithm. */
+unsigned char SimHost_ReadOpponentDetected(void) {
+    return sim_opponent_detected;
+}
+
+/* Future beacon input: unused by bridge.py until a real scene object is mapped. */
+EXPORT void SimHost_SetOpponentDetected(unsigned char detected) {
+    sim_opponent_detected = detected ? 1u : 0u;
+}
+
+/* Raw contact input from the optional front bumper proximity sensor. */
+EXPORT void SimHost_SetBumperPressed(unsigned char pressed) {
+    sim_bumper_pressed = pressed ? 1u : 0u;
 }
 
 EXPORT void SimHost_Init(void) {
+    sim_opponent_detected = 0;
+    sim_bumper_pressed = 0;
+    previous_bumper_pressed = 0;
     Motor_Init();
     TapeSensor_Init();
     Bumper_Init(); Servo_Init(); Flywheel_Init(); Opponent_Init();
@@ -122,6 +134,8 @@ EXPORT void SimHost_Step(double seconds) {
     while (timer_active && target_ms >= next_nav_timer_ms && max_events-- > 0) {
         sim_clock_ms = next_nav_timer_ms;
         timer_active = 0;
+        /* Forward edge-triggered bumper events into the original C service. */
+        CheckNavigationEvents();
         RunNavigation((ES_Event){ ES_TIMEOUT, NAV_TIMER });
     }
     sim_clock_ms = target_ms;
@@ -130,4 +144,61 @@ EXPORT void SimHost_Step(double seconds) {
 EXPORT void SimHost_GetMotors(int *left, int *right) {
     if (left)  *left  = (int)pwm_left * (dir_left == FORWARD ? +1 : -1);
     if (right) *right = (int)pwm_right * (dir_right == FORWARD ? +1 : -1);
+}
+
+/* Read-only state inspector, implemented by the original Navigation.c.
+ * Python displays this text; it never uses it to decide motor commands.
+ */
+#ifdef SIMULATOR
+extern const char *Navigation_GetStateName(void);
+EXPORT const char *SimHost_GetStateName(void) {
+    return Navigation_GetStateName();
+}
+#endif
+
+/* Motor helpers, bumper edge detection, and diagnostic state names. */
+
+void Motor_Direction(unsigned char direction) {
+    Motor_SetLeftDirection(direction);
+    Motor_SetRightDirection(direction);
+}
+void Motor_Speed(unsigned int speed) {
+    Motor_SetLeftSpeed(speed);
+    Motor_SetRightSpeed(speed);
+}
+void Motor_Forward(unsigned int speed) {
+    Motor_Direction(FORWARD);
+    Motor_Speed(speed);
+}
+void Motor_Reverse(unsigned int speed) {
+    Motor_Direction(REVERSE);
+    Motor_Speed(speed);
+}
+void Motor_TurnRight(unsigned int speed) {
+    Motor_SetLeftDirection(FORWARD);
+    Motor_SetRightDirection(REVERSE);
+    Motor_Speed(speed);
+}
+
+/* Detect one new bumper press, matching the hardware edge behavior. */
+unsigned char Bumper_NewPress(void) {
+    unsigned char pressed = Bumper_IsPressed();
+    unsigned char new_press = pressed && !previous_bumper_pressed;
+    previous_bumper_pressed = pressed;
+    return new_press;
+}
+
+extern unsigned int Navigation_GetDiagnosticState(void);
+const char *Navigation_GetStateName(void) {
+    static const char *const labels[] = {
+        "FIND_TAPE", "FOLLOW_TAPE", "BUMPED",
+        "SHOOT_AT_TOWER", "FIND_OPPONENT", "DONE"
+    };
+    unsigned int state = Navigation_GetDiagnosticState();
+    if (state == 4u) {
+        /* Navigation owns the opponent task; Opponent.c owns its stages. */
+        extern const char *Opponent_GetStateName(void);
+        return Opponent_GetStateName();
+    }
+    return state < 6u ? labels[state] : "UNKNOWN";
 }

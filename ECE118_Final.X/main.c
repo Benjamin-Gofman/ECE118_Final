@@ -21,8 +21,7 @@ int main(void) {
     Opponent_Init();
     Flywheel_Init();
 
-    Motor_SetLeftDirection(FORWARD);
-    Motor_SetRightDirection(FORWARD);
+    Motor_Direction(FORWARD);
 
     // Run the framework if all services initialize successfully
     if (ES_Initialize() == Success) {

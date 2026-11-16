@@ -11,18 +11,15 @@
 #include "ES_Framework.h"
 #include "Servo.h"
 #include "Opponent.h"
-#include "Flywheel.h"
 #include "LineFollowing.h"
 
-#define DRIVE_PWM             600u // 60% PWM
-#define SLOW_PWM              400u // 40% PWM
-#define SCAN_MS              1200u // 360-degree turn
-#define SAMPLE_MS              10u // Navigation update interval
-#define BALL_ROLL_MS         1000u // Wait for the ball to roll down the slide
-#define FEED_OPEN_MS          300u // Time for 1 ball to pass the servo
-#define FEED_CLOSE_MS         300u // Time for servo to close
-#define OPPONENT_FEED_GAP_MS 1000u // Wait between feeds
-#define FLYWHEEL_SPINUP_MS    500u // Get it steadily spinning
+#define TOWER_TARGET_COUNT      2 // Number of towers before opponent search
+#define TIMER_INACTIVE          0 // Timer has not started
+#define TOWER_REARM_MS       3000 // Time between tower shots
+#define BANNER_CLEAR_MS       600 // Banner must disappear before detecting next tower
+#define SAMPLE_MS              10 // Navigation update interval
+#define BALL_ROLL_MS         1000 // Wait for the ball to roll down the slide
+#define FEED_ACTION_MS        300 // Time for opening or closing feeder
 
 typedef enum {
     FIND_TAPE,
@@ -30,20 +27,26 @@ typedef enum {
     BUMPED,
     SHOOT_AT_TOWER,
     FIND_OPPONENT,
-    DONE,
-    APPROACH_OPPONENT
+    DONE
 } MovementState;
 
-static MovementState movement = FIND_TAPE;
-
+static MovementState movement = FIND_TAPE; // Current navigation state
+static unsigned int bannerLowSince = TIMER_INACTIVE; // Confirm banner is no longer detected at the same tower
 static unsigned int stepStart; // Timer count
-static unsigned int towerCount = 0;
-static unsigned char bannerSeen = 0;
-static unsigned char opponentShots = 0;
-static unsigned char ballReleased = 0;
+static unsigned int towerCount = 0; // Number of towers scored
+static unsigned int lastTowerShotAt = 0; // Prevent shooting twice at the same tower
+static unsigned char bannerArmed = 1; // Prevent shooting twice at the same tower
+static unsigned char ballReleased = 0; // Ball not released
 static uint8_t navigationPriority;
-static unsigned char feederOpen = 0;
-static unsigned char flywheelStarted = 0;
+
+#ifdef SIMULATOR
+
+// Read-only state for simulator diagnostics; navigation remains in C
+
+unsigned int Navigation_GetDiagnosticState(void) {
+    return (unsigned int) movement;
+}
+#endif
 
 static unsigned char TimePassed(unsigned int now, uint32_t milliseconds) {
     // Return 1 after the current movement step lasts long enough
@@ -56,65 +59,14 @@ static void FindingTape(unsigned char onTape[6]) {
         movement = FOLLOW_TAPE;
     } else {
         // Keep driving forward
-        Motor_SetLeftDirection(FORWARD);
-        Motor_SetRightDirection(FORWARD);
-        Motor_SetLeftSpeed(DRIVE_PWM);
-        Motor_SetRightSpeed(DRIVE_PWM);
+        Motor_Forward(DRIVE_PWM);
     }
-}
-
-static unsigned char ShootAtOpponent(uint32_t now) {
-    // Start the flywheel before feeding the first ball
-    if (opponentShots < 2 && !flywheelStarted) {
-        Flywheel_Start();
-        flywheelStarted = 1;
-        stepStart = now;
-        return 0;
-    }
-
-    // Wait for spin-up before feeding the first ball
-    if (opponentShots == 0 && !feederOpen &&
-            !TimePassed(now, FLYWHEEL_SPINUP_MS)) {
-        return 0;
-    }
-
-    // Close servo after ball passes
-    if (feederOpen && TimePassed(now, FEED_OPEN_MS)) {
-        Servo3_Close();
-        feederOpen = 0;
-        opponentShots++;
-        stepStart = now;
-        return 0;
-    }
-
-    // Wait for the servo to close and delay before feeding the 2nd ball
-    if (feederOpen ||
-            (opponentShots == 1 && !TimePassed(now, OPPONENT_FEED_GAP_MS))) {
-        return 0;
-    }
-
-    // Open the servo
-    if (opponentShots < 2) {
-        Servo3_Open();
-        feederOpen = 1;
-        stepStart = now;
-        return 0;
-    }
-
-    // Close the servo before turning off the flywheel
-    if (!TimePassed(now, FEED_CLOSE_MS)) {
-        return 0;
-    }
-
-    Flywheel_Stop();
-    flywheelStarted = 0;
-    return 1;
 }
 
 static void RunTower(unsigned int now) {
     Motor_Stop();
 
-    if (!ballReleased && TimePassed(now, FEED_OPEN_MS)) {
+    if (!ballReleased && TimePassed(now, FEED_ACTION_MS)) {
         // Close the feeder after giving one ball time to pass
         Servo2_Close();
         ballReleased = 1;
@@ -122,21 +74,20 @@ static void RunTower(unsigned int now) {
     }
 
     // Wait for the ball to roll down the slide
-    if (!ballReleased || !TimePassed(now, FEED_CLOSE_MS + BALL_ROLL_MS)) {
+    if (!ballReleased || !TimePassed(now, FEED_ACTION_MS + BALL_ROLL_MS)) {
         return;
     }
 
     towerCount++;
+    // A new tower must have a separate, stable white-banner sighting.
+    bannerArmed = 0;
 
     // Reset for the next tower
     ballReleased = 0;
 
-    if (towerCount >= 2 && opponentShots >= 2) {
-        movement = DONE;
-    } else if (towerCount >= 2) {
-        // Time the opponent search
-        Opponent_StartSearch();
-        stepStart = now;
+    if (towerCount >= TOWER_TARGET_COUNT) {
+        // After two different banner/tower shots, tape navigation is finished forever.
+        Opponent_StartSearch(now);
         movement = FIND_OPPONENT;
     } else {
         movement = FOLLOW_TAPE;
@@ -146,22 +97,33 @@ static void RunTower(unsigned int now) {
 static void UpdateNavigation(uint32_t now) {
     unsigned int readings[6];
     unsigned char onTape[6];
-    unsigned char banner = TapeSensor_CheckBanner();
+    unsigned char banner;
 
     if (movement == DONE) {
         Motor_Stop();
         return;
     }
 
+    if (movement == FIND_OPPONENT) {
+        OpponentStatus result = Opponent_Update(now);
+        // Check if opponent task is finished or failed
+        if (result == OPPONENT_FINISHED || result == OPPONENT_FAILED) {
+            Motor_Stop();
+            movement = DONE;
+        }
+        return;
+    }
+
     if (movement == BUMPED) {
-        // Shoot at the opponent after backing up
-        if (Bumper_IsShooting() && ShootAtOpponent(now)) {
-            Bumper_ShootingComplete(now);
-        } else if (!Bumper_IsShooting() && RunBumperRecovery(now)) {
-            // Finish recovery then look for tape
-            Motor_SetLeftDirection(FORWARD);
-            Motor_SetRightDirection(FORWARD);
-            movement = FIND_TAPE;
+        // Recover from an obstacle without launching balls at the opponent.
+        if (RunBumperRecovery(now)) {
+            if (towerCount >= TOWER_TARGET_COUNT) {
+                Motor_Stop();
+                movement = DONE;
+            } else {
+                Motor_Direction(FORWARD);
+                movement = FIND_TAPE;
+            }
         }
         return;
     }
@@ -171,67 +133,51 @@ static void UpdateNavigation(uint32_t now) {
         return;
     }
 
-    if (movement == FIND_OPPONENT) {
-        // Stop scan if beacon detected or timer runs out
-        OpponentSearchResult result = SearchOpponent(
-                TimePassed(now, SCAN_MS) ? SCAN_LIMIT_DEG : 0u);
-
-        if (result == OPPONENT_FOUND) {
-            Motor_SetLeftDirection(FORWARD);
-            Motor_SetRightDirection(FORWARD);
-            movement = APPROACH_OPPONENT;
-        } else if (result == OPPONENT_NOT_FOUND) {
-            movement = DONE;
-        }
-        return;
-    }
-
-    if (movement == APPROACH_OPPONENT) {
-        // Drive toward the opponent until bumper is pressed
-        Motor_SetLeftSpeed(SLOW_PWM);
-        Motor_SetRightSpeed(SLOW_PWM);
-        return;
-    }
-
+    // Read banner and tape sensors, stop if reading fails
+    banner = TapeSensor_CheckBanner();
     if (TapeSensor_ReadValues(readings) != SUCCESS ||
             TapeSensor_CheckTape(readings, onTape) != SUCCESS) {
         Motor_Stop();
         return;
     }
 
+    if (!banner) {
+        if (bannerLowSince == TIMER_INACTIVE) {
+            bannerLowSince = now;
+        }
+        // Allow shooting at the next tower after the cooldown and banner clear time
+        if (!bannerArmed &&
+                (uint32_t) (now - lastTowerShotAt) >= TOWER_REARM_MS &&
+                (uint32_t) (now - bannerLowSince) >= BANNER_CLEAR_MS) {
+            bannerArmed = 1;
+        }
+    } else {
+        bannerLowSince = TIMER_INACTIVE;
+        // Shoot only if a new tower can be detected
+        if (bannerArmed && towerCount < TOWER_TARGET_COUNT) {
+            bannerArmed = 0;
+            Motor_Stop();
+            Servo1_Open();
+            Servo2_Open();
+            lastTowerShotAt = now;
+            stepStart = now;
+            movement = SHOOT_AT_TOWER;
+            return;
+        }
+    }
+
+    // Search for tape until the front sensors detect it
     if (movement == FIND_TAPE) {
         FindingTape(onTape);
-
-        // Keep searching until a front sensor sees tape
         if (movement == FIND_TAPE) {
             return;
         }
     }
 
-    if (banner) {
-        // Keep following the tape
-        bannerSeen = 1;
-    } else if (bannerSeen) {
-        // TOP goes LOW after losing the banner
-        bannerSeen = 0;
-        if (towerCount < 2) {
-
-            Motor_Stop();
-            Servo1_Open();
-            Servo2_Open();
-            stepStart = now;
-            movement = SHOOT_AT_TOWER;
-        }
-        return;
-    }
-
     // Drive straight if all three front sensors see white
     if (!onTape[0] && !onTape[1] && !onTape[2]) {
         movement = FIND_TAPE;
-        Motor_SetLeftDirection(FORWARD);
-        Motor_SetRightDirection(FORWARD);
-        Motor_SetLeftSpeed(DRIVE_PWM);
-        Motor_SetRightSpeed(DRIVE_PWM);
+        Motor_Forward(DRIVE_PWM);
         return;
     }
 
@@ -240,25 +186,18 @@ static void UpdateNavigation(uint32_t now) {
 
 /* ES_CheckEvents.c, detects bumper presses and posts events */
 uint8_t CheckNavigationEvents(void) {
-    static uint8_t lastPressed = 0u; // Previous bumper state
-    uint8_t pressed = Bumper_IsPressed() ? 1u : 0u; // Current state
-
-    // Detect a new bumper press
-    if (pressed && !lastPressed) {
-        ES_Event event = {NAV_BUMPER_PRESSED, 0u};
+    // Only post one event for each physical bumper press
+    if (Bumper_NewPress()) {
+        ES_Event event = {NAV_BUMPER_PRESSED, 0};
 
         // Post event to Navigation and retry if the queue is full
         if (!PostNavigation(event)) {
-            return 0u;
+            return 0;
         }
 
-        lastPressed = pressed;
-        return 1u;
+        return 1;
     }
-
-    // Save bumper state for next check
-    lastPressed = pressed;
-    return 0u;
+    return 0;
 }
 
 /* ES_Framework.c, queues the startup event for Navigation */
@@ -266,7 +205,7 @@ uint8_t InitNavigation(uint8_t priority) {
     navigationPriority = priority;
 
     return PostNavigation((ES_Event) {
-        ES_INIT, 0u
+        ES_INIT, 0
     });
 }
 
@@ -280,21 +219,21 @@ ES_Event RunNavigation(ES_Event event) {
 
     // Initialize the 10 ms navigation timer
     if (event.EventType == ES_INIT) {
+        movement = FIND_TAPE;
+        stepStart = ES_Timer_GetTime();
+        bannerLowSince = TIMER_INACTIVE;
         ES_Timer_InitTimer(NAV_TIMER, SAMPLE_MS);
 
         // Handle bumper press event
     } else if (event.EventType == NAV_BUMPER_PRESSED) {
         // Start recovery if not already recovering
-        if (movement != BUMPED && movement != DONE) {
-            // Stop shooting
-            Flywheel_Stop();
+        if (movement == FIND_OPPONENT) {
+            Opponent_OnBumperPress(ES_Timer_GetTime());
+        } else if (movement != BUMPED && movement != DONE) {
+            // Stop tower feeding while recovering from an obstacle.
             Servo2_Close();
-            Servo3_Close();
-            feederOpen = 0;
-            flywheelStarted = 0;
             ballReleased = 0;
             // Forget the banner
-            bannerSeen = 0;
 
             movement = BUMPED;
             StartBumperRecovery(ES_Timer_GetTime());
@@ -309,6 +248,6 @@ ES_Event RunNavigation(ES_Event event) {
 
     /* No additional events to process */
     return (ES_Event) {
-        ES_NO_EVENT, 0u
+        ES_NO_EVENT, 0
     };
 }

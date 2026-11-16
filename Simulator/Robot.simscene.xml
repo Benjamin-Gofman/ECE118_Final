@@ -16,8 +16,8 @@
                 <handle>0</handle>
                 <parentHandle>-1</parentHandle>
                 <localFrame>
-                    <position>2.8535e-01 -2.6746e+00 3.1533e+00</position>
-                    <quaternion>5.9379e-04 1.5846e-03 9.3642e-01 3.5089e-01</quaternion>
+                    <position>2.9050e-01 -2.5636e+00 2.6528e+00</position>
+                    <quaternion>6.3713e-04 1.5677e-03 9.2641e-01 3.7650e-01</quaternion>
                 </localFrame>
                 <assembling>
                     <localFrame>
@@ -4341,13 +4341,13 @@
                 <localObjectSpecialProperty>
                     <collidable>true</collidable>
                     <measurable>true</measurable>
-                    <detectable>true</detectable>
+                    <detectable>false</detectable>
                     <renderable>true</renderable>
-                    <ultrasonicDetectable>true</ultrasonicDetectable>
-                    <infraredDetectable>true</infraredDetectable>
-                    <laserDetectable>true</laserDetectable>
-                    <inductiveDetectable>true</inductiveDetectable>
-                    <capacitiveDetectable>true</capacitiveDetectable>
+                    <ultrasonicDetectable>false</ultrasonicDetectable>
+                    <infraredDetectable>false</infraredDetectable>
+                    <laserDetectable>false</laserDetectable>
+                    <inductiveDetectable>false</inductiveDetectable>
+                    <capacitiveDetectable>false</capacitiveDetectable>
                 </localObjectSpecialProperty>
                 <localModelProperty>
                     <notCollidable>false</notCollidable>
@@ -4927,13 +4927,13 @@
                 <localObjectSpecialProperty>
                     <collidable>true</collidable>
                     <measurable>true</measurable>
-                    <detectable>true</detectable>
+                    <detectable>false</detectable>
                     <renderable>true</renderable>
-                    <ultrasonicDetectable>true</ultrasonicDetectable>
-                    <infraredDetectable>true</infraredDetectable>
-                    <laserDetectable>true</laserDetectable>
-                    <inductiveDetectable>true</inductiveDetectable>
-                    <capacitiveDetectable>true</capacitiveDetectable>
+                    <ultrasonicDetectable>false</ultrasonicDetectable>
+                    <infraredDetectable>false</infraredDetectable>
+                    <laserDetectable>false</laserDetectable>
+                    <inductiveDetectable>false</inductiveDetectable>
+                    <capacitiveDetectable>false</capacitiveDetectable>
                 </localObjectSpecialProperty>
                 <localModelProperty>
                     <notCollidable>false</notCollidable>
@@ -5513,13 +5513,13 @@
                 <localObjectSpecialProperty>
                     <collidable>true</collidable>
                     <measurable>true</measurable>
-                    <detectable>true</detectable>
+                    <detectable>false</detectable>
                     <renderable>true</renderable>
-                    <ultrasonicDetectable>true</ultrasonicDetectable>
-                    <infraredDetectable>true</infraredDetectable>
-                    <laserDetectable>true</laserDetectable>
-                    <inductiveDetectable>true</inductiveDetectable>
-                    <capacitiveDetectable>true</capacitiveDetectable>
+                    <ultrasonicDetectable>false</ultrasonicDetectable>
+                    <infraredDetectable>false</infraredDetectable>
+                    <laserDetectable>false</laserDetectable>
+                    <inductiveDetectable>false</inductiveDetectable>
+                    <capacitiveDetectable>false</capacitiveDetectable>
                 </localObjectSpecialProperty>
                 <localModelProperty>
                     <notCollidable>false</notCollidable>
@@ -6062,10 +6062,303 @@
     <sceneObject>
         <shape>
             <common>
+                <alias>Opponent</alias>
+                <name>Opponent</name>
+                <altName>Cylinder1</altName>
+                <handle>29</handle>
+                <parentHandle>13</parentHandle>
+                <localFrame>
+                    <position>-6.0000e-01 -6.0000e-01 1.0000e-01</position>
+                    <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
+                </localFrame>
+                <assembling>
+                    <localFrame>
+                        <position>0.0000e+00 0.0000e+00 0.0000e+00</position>
+                        <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
+                    </localFrame>
+                    <matchValues>
+                        <child>default</child>
+                        <parent>default</parent>
+                    </matchValues>
+                    <localFrameIsUsed>false</localFrameIsUsed>
+                </assembling>
+                <hierarchyColorIndex>-1</hierarchyColorIndex>
+                <collectionSelfCollisionIndicator>0</collectionSelfCollisionIndicator>
+                <localObjectProperty>
+                    <hierarchyCollapsed>false</hierarchyCollapsed>
+                    <selectable>true</selectable>
+                    <selectModelBaseInstead>false</selectModelBaseInstead>
+                    <dontShowAsInsideModel>false</dontShowAsInsideModel>
+                    <selectInvisible>false</selectInvisible>
+                    <depthInvisible>false</depthInvisible>
+                    <cannotDelete>false</cannotDelete>
+                    <cannotDeleteDuringSimulation>false</cannotDeleteDuringSimulation>
+                    <ignoreViewFitting>false</ignoreViewFitting>
+                    <hiddenForSimulation>false</hiddenForSimulation>
+                </localObjectProperty>
+                <localObjectSpecialProperty>
+                    <collidable>false</collidable>
+                    <measurable>false</measurable>
+                    <detectable>true</detectable>
+                    <renderable>true</renderable>
+                    <ultrasonicDetectable>true</ultrasonicDetectable>
+                    <infraredDetectable>true</infraredDetectable>
+                    <laserDetectable>true</laserDetectable>
+                    <inductiveDetectable>true</inductiveDetectable>
+                    <capacitiveDetectable>true</capacitiveDetectable>
+                </localObjectSpecialProperty>
+                <localModelProperty>
+                    <notCollidable>false</notCollidable>
+                    <notMeasurable>false</notMeasurable>
+                    <notDetectable>false</notDetectable>
+                    <notDynamic>false</notDynamic>
+                    <notRespondable>false</notRespondable>
+                    <notReset>false</notReset>
+                    <notVisible>false</notVisible>
+                    <scriptsInactive>false</scriptsInactive>
+                    <notShowAsInsideModel>false</notShowAsInsideModel>
+                    <notRenderable>false</notRenderable>
+                </localModelProperty>
+                <layer>1</layer>
+                <childOrder>-1</childOrder>
+                <switches>
+                    <modelBase>false</modelBase>
+                </switches>
+                <manipulation>
+                    <permissions>35</permissions>
+                    <translation>
+                        <disabledDuringSimulation>false</disabledDuringSimulation>
+                        <disabledDuringNonSimulation>false</disabledDuringNonSimulation>
+                        <settingsLocked>false</settingsLocked>
+                        <relativeTo>0</relativeTo>
+                        <nonDefaultStepSize>0.0000e+00</nonDefaultStepSize>
+                    </translation>
+                    <rotation>
+                        <disabledDuringSimulation>false</disabledDuringSimulation>
+                        <disabledDuringNonSimulation>false</disabledDuringNonSimulation>
+                        <settingsLocked>false</settingsLocked>
+                        <relativeTo>2</relativeTo>
+                        <nonDefaultStepSize>0.0000e+00</nonDefaultStepSize>
+                    </rotation>
+                </manipulation>
+                <sizeFactor>7.9370e-01</sizeFactor>
+                <scriptExecPriority>1</scriptExecPriority>
+                <sizeValues>1.0000e+00 1.0000e+00 5.0000e-01</sizeValues>
+                <dnaString_base64Coded>CxoCIkKaFIuIF79rcTiUBQ==</dnaString_base64Coded>
+                <uniquePersistentString_base64Coded>NUQ3ODM1M0RDM0QxQzIwQg==</uniquePersistentString_base64Coded>
+                <transparentObjectDistanceOffset>0.0000e+00</transparentObjectDistanceOffset>
+                <authorizedViewableObjects>-1</authorizedViewableObjects>
+                <extensionString></extensionString>
+                <modelAcknowledgement></modelAcknowledgement>
+            </common>
+            <meshProxy>
+                <mesh>
+                    <common>
+                        <name>sub__0</name>
+                        <!-- 'transformationSinceGrouping' tag: deprecated, for backward compatibility -->
+                        <transformationSinceGrouping>
+                            <position>0.0000e+00 0.0000e+00 0.0000e+00</position>
+                            <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
+                        </transformationSinceGrouping>
+                        <dynamics>
+                            <mass>3.1416e+00</mass>
+                            <!-- 'localInertiaFrame' tag: deprecated, for backward compatibility -->
+                            <localInertiaFrame>
+                                <position>0.0000e+00 0.0000e+00 0.0000e+00</position>
+                                <quaternion>0.0000e+00 7.0711e-01 7.0711e-01 0.0000e+00</quaternion>
+                                <principalMomentsOfInertia>1.3958e-02 1.3958e-02 1.2500e-03</principalMomentsOfInertia>
+                            </localInertiaFrame>
+                            <inertiaFrame>
+                                <position>0.0000e+00 0.0000e+00 0.0000e+00</position>
+                                <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
+                            </inertiaFrame>
+                            <centerOfMass>0.0000e+00 0.0000e+00 0.0000e+00</centerOfMass>
+                            <inertia>1.3958e-02 0.0000e+00 0.0000e+00 0.0000e+00 1.3958e-02 0.0000e+00 0.0000e+00 0.0000e+00 1.2500e-03</inertia>
+                            <bbFrame>
+                                <position>-0.0000e+00 -0.0000e+00 -0.0000e+00</position>
+                                <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
+                            </bbFrame>
+                            <bbSize>1.0000e-01 1.0000e-01 2.0000e-01</bbSize>
+                        </dynamics>
+                    </common>
+                    <shadingAngle>3.0000e+01</shadingAngle>
+                    <edgeThresholdAngle>3.0000e+01</edgeThresholdAngle>
+                    <color>
+                        <name></name>
+                        <extensionString>povray { pattern {default}}</extensionString>
+                        <ambient>1.0000e+00 0.0000e+00 1.0000e+00</ambient>
+                        <diffuse>0.0000e+00 0.0000e+00 0.0000e+00</diffuse>
+                        <specular>2.5000e-01 2.5000e-01 2.5000e-01</specular>
+                        <emission>0.0000e+00 0.0000e+00 0.0000e+00</emission>
+                        <temperature>5.0000e-01 0.0000e+00 0.0000e+00</temperature>
+                        <shininess>0</shininess>
+                        <transparency>5.0000e-01</transparency>
+                        <switches>
+                            <transparent>false</transparent>
+                        </switches>
+                        <flashing>
+                            <enabled>false</enabled>
+                            <inSimulationTime>false</inSimulationTime>
+                            <frequency>2.0000e+00</frequency>
+                            <ratio>5.0000e-01</ratio>
+                            <phase>0.0000e+00</phase>
+                        </flashing>
+                    </color>
+                    <primitive>
+                        <type>cylinder</type>
+                        <insideScaling>0.0000e+00</insideScaling>
+                        <sizes>1.0000e-01 1.0000e-01 2.0000e-01</sizes>
+                    </primitive>
+                    <!-- 'verticesLocalFrame' tag: deprecated, for backward compatibility -->
+                    <verticesLocalFrame>
+                        <position>0.0000e+00 0.0000e+00 0.0000e+00</position>
+                        <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
+                    </verticesLocalFrame>
+                    <switches>
+                        <edgesVisible>false</edgesVisible>
+                        <culling>false</culling>
+                        <wireframe>false</wireframe>
+                        <!-- 'hideEdgeBorders' tag: deprecated, for backward compatibility -->
+                        <hideEdgeBorders>false</hideEdgeBorders>
+                    </switches>
+                    <heightfield>
+                        <sizes>0 0</sizes>
+                        <data></data>
+                    </heightfield>
+                    <meshData>
+                        <vertices>0.0000e+00 0.0000e+00 1.0000e-01 5.0000e-02 0.0000e+00 1.0000e-01 4.9039e-02 9.7545e-03 1.0000e-01 5.0000e-02 0.0000e+00 -1.0000e-01 0.0000e+00 0.0000e+00 -1.0000e-01 4.9039e-02 9.7545e-03 -1.0000e-01 4.6194e-02 1.9134e-02 1.0000e-01 4.6194e-02 1.9134e-02 -1.0000e-01 4.1573e-02 2.7779e-02 1.0000e-01 4.1573e-02 2.7779e-02 -1.0000e-01 3.5355e-02 3.5355e-02 1.0000e-01 3.5355e-02 3.5355e-02 -1.0000e-01 2.7779e-02 4.1573e-02 1.0000e-01 2.7779e-02 4.1573e-02 -1.0000e-01 1.9134e-02 4.6194e-02 1.0000e-01 1.9134e-02 4.6194e-02 -1.0000e-01 9.7545e-03 4.9039e-02 1.0000e-01 9.7545e-03 4.9039e-02 -1.0000e-01 -5.1706e-15 5.0000e-02 1.0000e-01 -5.1706e-15 5.0000e-02 -1.0000e-01 -9.7545e-03 4.9039e-02 1.0000e-01 -9.7545e-03 4.9039e-02 -1.0000e-01 -1.9134e-02 4.6194e-02 1.0000e-01 -1.9134e-02 4.6194e-02 -1.0000e-01 -2.7779e-02 4.1573e-02 1.0000e-01 -2.7779e-02 4.1573e-02 -1.0000e-01 -3.5355e-02 3.5355e-02 1.0000e-01 -3.5355e-02 3.5355e-02 -1.0000e-01 -4.1573e-02 2.7779e-02 1.0000e-01 -4.1573e-02 2.7779e-02 -1.0000e-01 -4.6194e-02 1.9134e-02 1.0000e-01 -4.6194e-02 1.9134e-02 -1.0000e-01 -4.9039e-02 9.7545e-03 1.0000e-01 -4.9039e-02 9.7545e-03 -1.0000e-01 -5.0000e-02 -1.0341e-14 1.0000e-01 -5.0000e-02 -1.0341e-14 -1.0000e-01 -4.9039e-02 -9.7545e-03 1.0000e-01 -4.9039e-02 -9.7545e-03 -1.0000e-01 -4.6194e-02 -1.9134e-02 1.0000e-01 -4.6194e-02 -1.9134e-02 -1.0000e-01 -4.1573e-02 -2.7779e-02 1.0000e-01 -4.1573e-02 -2.7779e-02 -1.0000e-01 -3.5355e-02 -3.5355e-02 1.0000e-01 -3.5355e-02 -3.5355e-02 -1.0000e-01 -2.7779e-02 -4.1573e-02 1.0000e-01 -2.7779e-02 -4.1573e-02 -1.0000e-01 -1.9134e-02 -4.6194e-02 1.0000e-01 -1.9134e-02 -4.6194e-02 -1.0000e-01 -9.7545e-03 -4.9039e-02 1.0000e-01 -9.7545e-03 -4.9039e-02 -1.0000e-01 1.5534e-14 -5.0000e-02 1.0000e-01 1.5534e-14 -5.0000e-02 -1.0000e-01 9.7545e-03 -4.9039e-02 1.0000e-01 9.7545e-03 -4.9039e-02 -1.0000e-01 1.9134e-02 -4.6194e-02 1.0000e-01 1.9134e-02 -4.6194e-02 -1.0000e-01 2.7779e-02 -4.1573e-02 1.0000e-01 2.7779e-02 -4.1573e-02 -1.0000e-01 3.5355e-02 -3.5355e-02 1.0000e-01 3.5355e-02 -3.5355e-02 -1.0000e-01 4.1573e-02 -2.7779e-02 1.0000e-01 4.1573e-02 -2.7779e-02 -1.0000e-01 4.6194e-02 -1.9134e-02 1.0000e-01 4.6194e-02 -1.9134e-02 -1.0000e-01 4.9039e-02 -9.7545e-03 1.0000e-01 4.9039e-02 -9.7545e-03 -1.0000e-01</vertices>
+                        <indices>0 1 2 3 4 5 1 3 2 3 5 2 0 2 6 5 4 7 2 5 6 5 7 6 0 6 8 7 4 9 6 7 8 7 9 8 0 8 10 9 4 11 8 9 10 9 11 10 0 10 12 11 4 13 10 11 12 11 13 12 0 12 14 13 4 15 12 13 14 13 15 14 0 14 16 15 4 17 14 15 16 15 17 16 0 16 18 17 4 19 16 17 18 17 19 18 0 18 20 19 4 21 18 19 20 19 21 20 0 20 22 21 4 23 20 21 22 21 23 22 0 22 24 23 4 25 22 23 24 23 25 24 0 24 26 25 4 27 24 25 26 25 27 26 0 26 28 27 4 29 26 27 28 27 29 28 0 28 30 29 4 31 28 29 30 29 31 30 0 30 32 31 4 33 30 31 32 31 33 32 0 32 34 33 4 35 32 33 34 33 35 34 0 34 36 35 4 37 34 35 36 35 37 36 0 36 38 37 4 39 36 37 38 37 39 38 0 38 40 39 4 41 38 39 40 39 41 40 0 40 42 41 4 43 40 41 42 41 43 42 0 42 44 43 4 45 42 43 44 43 45 44 0 44 46 45 4 47 44 45 46 45 47 46 0 46 48 47 4 49 46 47 48 47 49 48 0 48 50 49 4 51 48 49 50 49 51 50 0 50 52 51 4 53 50 51 52 51 53 52 0 52 54 53 4 55 52 53 54 53 55 54 0 54 56 55 4 57 54 55 56 55 57 56 0 56 58 57 4 59 56 57 58 57 59 58 0 58 60 59 4 61 58 59 60 59 61 60 0 60 62 61 4 63 60 61 62 61 63 62 0 62 64 63 4 65 62 63 64 63 65 64 0 64 1 65 4 3 64 65 1 65 3 1</indices>
+                        <normals>0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 9.9518e-01 -3.2672e-02 0.0000e+00 9.9518e-01 3.2672e-02 0.0000e+00 9.8244e-01 1.6211e-01 0.0000e+00 9.9518e-01 3.2672e-02 0.0000e+00 9.6969e-01 2.2620e-01 0.0000e+00 9.8244e-01 1.6211e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 9.8244e-01 1.6211e-01 0.0000e+00 9.6969e-01 2.2620e-01 0.0000e+00 9.3193e-01 3.5066e-01 0.0000e+00 9.6969e-01 2.2620e-01 0.0000e+00 9.0693e-01 4.1103e-01 0.0000e+00 9.3193e-01 3.5066e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 9.3193e-01 3.5066e-01 0.0000e+00 9.0693e-01 4.1103e-01 0.0000e+00 8.4562e-01 5.2573e-01 0.0000e+00 9.0693e-01 4.1103e-01 0.0000e+00 8.0931e-01 5.8006e-01 0.0000e+00 8.4562e-01 5.2573e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 8.4562e-01 5.2573e-01 0.0000e+00 8.0931e-01 5.8006e-01 0.0000e+00 7.2680e-01 6.8060e-01 0.0000e+00 8.0931e-01 5.8006e-01 0.0000e+00 6.8060e-01 7.2680e-01 0.0000e+00 7.2680e-01 6.8060e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 7.2680e-01 6.8060e-01 0.0000e+00 6.8060e-01 7.2680e-01 0.0000e+00 5.8006e-01 8.0931e-01 0.0000e+00 6.8060e-01 7.2680e-01 0.0000e+00 5.2573e-01 8.4562e-01 0.0000e+00 5.8006e-01 8.0931e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 5.8006e-01 8.0931e-01 0.0000e+00 5.2573e-01 8.4562e-01 0.0000e+00 4.1103e-01 9.0693e-01 0.0000e+00 5.2573e-01 8.4562e-01 0.0000e+00 3.5066e-01 9.3193e-01 0.0000e+00 4.1103e-01 9.0693e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 4.1103e-01 9.0693e-01 0.0000e+00 3.5066e-01 9.3193e-01 0.0000e+00 2.2620e-01 9.6969e-01 0.0000e+00 3.5066e-01 9.3193e-01 0.0000e+00 1.6211e-01 9.8244e-01 0.0000e+00 2.2620e-01 9.6969e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 -0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 2.2620e-01 9.6969e-01 0.0000e+00 1.6211e-01 9.8244e-01 0.0000e+00 3.2672e-02 9.9518e-01 0.0000e+00 1.6211e-01 9.8244e-01 0.0000e+00 -3.2672e-02 9.9518e-01 0.0000e+00 3.2672e-02 9.9518e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 3.2672e-02 9.9518e-01 0.0000e+00 -3.2672e-02 9.9518e-01 0.0000e+00 -1.6211e-01 9.8244e-01 0.0000e+00 -3.2672e-02 9.9518e-01 0.0000e+00 -2.2620e-01 9.6969e-01 0.0000e+00 -1.6211e-01 9.8244e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 -1.6211e-01 9.8244e-01 0.0000e+00 -2.2620e-01 9.6969e-01 0.0000e+00 -3.5066e-01 9.3193e-01 0.0000e+00 -2.2620e-01 9.6969e-01 0.0000e+00 -4.1103e-01 9.0693e-01 0.0000e+00 -3.5066e-01 9.3193e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 -3.5066e-01 9.3193e-01 0.0000e+00 -4.1103e-01 9.0693e-01 0.0000e+00 -5.2573e-01 8.4562e-01 0.0000e+00 -4.1103e-01 9.0693e-01 0.0000e+00 -5.8006e-01 8.0931e-01 0.0000e+00 -5.2573e-01 8.4562e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 -5.2573e-01 8.4562e-01 0.0000e+00 -5.8006e-01 8.0931e-01 0.0000e+00 -6.8060e-01 7.2680e-01 0.0000e+00 -5.8006e-01 8.0931e-01 0.0000e+00 -7.2680e-01 6.8060e-01 0.0000e+00 -6.8060e-01 7.2680e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 -6.8060e-01 7.2680e-01 0.0000e+00 -7.2680e-01 6.8060e-01 0.0000e+00 -8.0931e-01 5.8006e-01 0.0000e+00 -7.2680e-01 6.8060e-01 0.0000e+00 -8.4562e-01 5.2573e-01 0.0000e+00 -8.0931e-01 5.8006e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 -8.0931e-01 5.8006e-01 0.0000e+00 -8.4562e-01 5.2573e-01 0.0000e+00 -9.0693e-01 4.1103e-01 0.0000e+00 -8.4562e-01 5.2573e-01 0.0000e+00 -9.3193e-01 3.5066e-01 0.0000e+00 -9.0693e-01 4.1103e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 -9.0693e-01 4.1103e-01 0.0000e+00 -9.3193e-01 3.5066e-01 0.0000e+00 -9.6969e-01 2.2620e-01 0.0000e+00 -9.3193e-01 3.5066e-01 0.0000e+00 -9.8244e-01 1.6211e-01 0.0000e+00 -9.6969e-01 2.2620e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 -0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -9.6969e-01 2.2620e-01 0.0000e+00 -9.8244e-01 1.6211e-01 0.0000e+00 -9.9518e-01 3.2672e-02 0.0000e+00 -9.8244e-01 1.6211e-01 0.0000e+00 -9.9518e-01 -3.2672e-02 0.0000e+00 -9.9518e-01 3.2672e-02 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -9.9518e-01 3.2672e-02 0.0000e+00 -9.9518e-01 -3.2672e-02 0.0000e+00 -9.8244e-01 -1.6211e-01 0.0000e+00 -9.9518e-01 -3.2672e-02 0.0000e+00 -9.6969e-01 -2.2620e-01 0.0000e+00 -9.8244e-01 -1.6211e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -9.8244e-01 -1.6211e-01 0.0000e+00 -9.6969e-01 -2.2620e-01 0.0000e+00 -9.3193e-01 -3.5066e-01 0.0000e+00 -9.6969e-01 -2.2620e-01 0.0000e+00 -9.0693e-01 -4.1103e-01 0.0000e+00 -9.3193e-01 -3.5066e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -9.3193e-01 -3.5066e-01 0.0000e+00 -9.0693e-01 -4.1103e-01 0.0000e+00 -8.4562e-01 -5.2573e-01 0.0000e+00 -9.0693e-01 -4.1103e-01 0.0000e+00 -8.0931e-01 -5.8006e-01 0.0000e+00 -8.4562e-01 -5.2573e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -8.4562e-01 -5.2573e-01 0.0000e+00 -8.0931e-01 -5.8006e-01 0.0000e+00 -7.2680e-01 -6.8060e-01 0.0000e+00 -8.0931e-01 -5.8006e-01 0.0000e+00 -6.8060e-01 -7.2680e-01 0.0000e+00 -7.2680e-01 -6.8060e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -7.2680e-01 -6.8060e-01 0.0000e+00 -6.8060e-01 -7.2680e-01 0.0000e+00 -5.8006e-01 -8.0931e-01 0.0000e+00 -6.8060e-01 -7.2680e-01 0.0000e+00 -5.2573e-01 -8.4562e-01 0.0000e+00 -5.8006e-01 -8.0931e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -5.8006e-01 -8.0931e-01 0.0000e+00 -5.2573e-01 -8.4562e-01 0.0000e+00 -4.1103e-01 -9.0693e-01 0.0000e+00 -5.2573e-01 -8.4562e-01 0.0000e+00 -3.5066e-01 -9.3193e-01 0.0000e+00 -4.1103e-01 -9.0693e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -4.1103e-01 -9.0693e-01 0.0000e+00 -3.5066e-01 -9.3193e-01 0.0000e+00 -2.2620e-01 -9.6969e-01 0.0000e+00 -3.5066e-01 -9.3193e-01 0.0000e+00 -1.6211e-01 -9.8244e-01 0.0000e+00 -2.2620e-01 -9.6969e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -2.2620e-01 -9.6969e-01 0.0000e+00 -1.6211e-01 -9.8244e-01 0.0000e+00 -3.2672e-02 -9.9518e-01 0.0000e+00 -1.6211e-01 -9.8244e-01 0.0000e+00 3.2672e-02 -9.9518e-01 0.0000e+00 -3.2672e-02 -9.9518e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 -3.2672e-02 -9.9518e-01 0.0000e+00 3.2672e-02 -9.9518e-01 0.0000e+00 1.6211e-01 -9.8244e-01 0.0000e+00 3.2672e-02 -9.9518e-01 0.0000e+00 2.2620e-01 -9.6969e-01 0.0000e+00 1.6211e-01 -9.8244e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 1.6211e-01 -9.8244e-01 0.0000e+00 2.2620e-01 -9.6969e-01 0.0000e+00 3.5066e-01 -9.3193e-01 0.0000e+00 2.2620e-01 -9.6969e-01 0.0000e+00 4.1103e-01 -9.0693e-01 0.0000e+00 3.5066e-01 -9.3193e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 3.5066e-01 -9.3193e-01 0.0000e+00 4.1103e-01 -9.0693e-01 0.0000e+00 5.2573e-01 -8.4562e-01 0.0000e+00 4.1103e-01 -9.0693e-01 0.0000e+00 5.8006e-01 -8.0931e-01 0.0000e+00 5.2573e-01 -8.4562e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 5.2573e-01 -8.4562e-01 0.0000e+00 5.8006e-01 -8.0931e-01 0.0000e+00 6.8060e-01 -7.2680e-01 0.0000e+00 5.8006e-01 -8.0931e-01 0.0000e+00 7.2680e-01 -6.8060e-01 0.0000e+00 6.8060e-01 -7.2680e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 6.8060e-01 -7.2680e-01 0.0000e+00 7.2680e-01 -6.8060e-01 0.0000e+00 8.0931e-01 -5.8006e-01 0.0000e+00 7.2680e-01 -6.8060e-01 0.0000e+00 8.4562e-01 -5.2573e-01 0.0000e+00 8.0931e-01 -5.8006e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 8.0931e-01 -5.8006e-01 0.0000e+00 8.4562e-01 -5.2573e-01 0.0000e+00 9.0693e-01 -4.1103e-01 0.0000e+00 8.4562e-01 -5.2573e-01 0.0000e+00 9.3193e-01 -3.5066e-01 0.0000e+00 9.0693e-01 -4.1103e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 9.0693e-01 -4.1103e-01 0.0000e+00 9.3193e-01 -3.5066e-01 0.0000e+00 9.6969e-01 -2.2620e-01 0.0000e+00 9.3193e-01 -3.5066e-01 0.0000e+00 9.8244e-01 -1.6211e-01 0.0000e+00 9.6969e-01 -2.2620e-01 0.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 0.0000e+00 0.0000e+00 -1.0000e+00 9.6969e-01 -2.2620e-01 0.0000e+00 9.8244e-01 -1.6211e-01 0.0000e+00 9.9518e-01 -3.2672e-02 0.0000e+00 9.8244e-01 -1.6211e-01 0.0000e+00 9.9518e-01 3.2672e-02 0.0000e+00 9.9518e-01 -3.2672e-02 0.0000e+00</normals>
+                        <edges>34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 34 35 50 0</edges>
+                    </meshData>
+                </mesh>
+            </meshProxy>
+            <dynamics>
+                <respondableMask>65535</respondableMask>
+                <initialLinearVelocity>0.0000e+00 0.0000e+00 0.0000e+00</initialLinearVelocity>
+                <initialAngularVelocity>0.0000e+00 0.0000e+00 0.0000e+00</initialAngularVelocity>
+                <switches>
+                    <static>false</static>
+                    <kinematic>false</kinematic>
+                    <respondable>true</respondable>
+                    <startSleeping>false</startSleeping>
+                    <setToDynamicIfGetsParent>false</setToDynamicIfGetsParent>
+                </switches>
+                <material>
+                    <id>2290024</id>
+                    <name>restStackGraspMaterial</name>
+                    <engines>
+                        <bullet>
+                            <restitution>0.0000e+00</restitution>
+                            <friction>5.0000e-01</friction>
+                            <oldfriction>1.0000e+00</oldfriction>
+                            <lineardamping>0.0000e+00</lineardamping>
+                            <angulardamping>0.0000e+00</angulardamping>
+                            <nondefaultcollisionmargingfactor>1.0000e-01</nondefaultcollisionmargingfactor>
+                            <nondefaultcollisionmargingfactorconvex>2.0000e-03</nondefaultcollisionmargingfactorconvex>
+                            <sticky>false</sticky>
+                            <usenondefaultcollisionmargin>false</usenondefaultcollisionmargin>
+                            <usenondefaultcollisionmarginconvex>true</usenondefaultcollisionmarginconvex>
+                            <autoshrinkconvex>false</autoshrinkconvex>
+                        </bullet>
+                        <ode>
+                            <friction>1.0000e+00</friction>
+                            <softerp>2.0000e-01</softerp>
+                            <softcfm>0.0000e+00</softcfm>
+                            <lineardamping>0.0000e+00</lineardamping>
+                            <angulardamping>0.0000e+00</angulardamping>
+                            <maxcontacts>64</maxcontacts>
+                        </ode>
+                        <vortex>
+                            <primlinearaxisfriction>1.0000e+00</primlinearaxisfriction>
+                            <seclinearaxisfriction>1.0000e+00</seclinearaxisfriction>
+                            <primangularaxisfriction>0.0000e+00</primangularaxisfriction>
+                            <secangularaxisfriction>0.0000e+00</secangularaxisfriction>
+                            <normalangularaxisfriction>0.0000e+00</normalangularaxisfriction>
+                            <primlinearaxisstaticfrictionscale>1.1000e+00</primlinearaxisstaticfrictionscale>
+                            <seclinearaxisstaticfrictionscale>1.1000e+00</seclinearaxisstaticfrictionscale>
+                            <primangularaxisstaticfrictionscale>1.0000e+00</primangularaxisstaticfrictionscale>
+                            <secangularaxisstaticfrictionscale>1.0000e+00</secangularaxisstaticfrictionscale>
+                            <normalangularaxisstaticfrictionscale>1.0000e+00</normalangularaxisstaticfrictionscale>
+                            <compliance>1.0000e-08</compliance>
+                            <damping>1.0000e+07</damping>
+                            <restitution>0.0000e+00</restitution>
+                            <restitutionthreshold>5.0000e-01</restitutionthreshold>
+                            <adhesiveforce>0.0000e+00</adhesiveforce>
+                            <linearvelocitydamping>0.0000e+00</linearvelocitydamping>
+                            <angularvelocitydamping>0.0000e+00</angularvelocitydamping>
+                            <primlinearaxisslide>0.0000e+00</primlinearaxisslide>
+                            <seclinearaxisslide>0.0000e+00</seclinearaxisslide>
+                            <primangularaxisslide>0.0000e+00</primangularaxisslide>
+                            <secangularaxisslide>0.0000e+00</secangularaxisslide>
+                            <normalangularaxisslide>0.0000e+00</normalangularaxisslide>
+                            <primlinearaxisslip>0.0000e+00</primlinearaxisslip>
+                            <seclinearaxisslip>0.0000e+00</seclinearaxisslip>
+                            <primangularaxisslip>0.0000e+00</primangularaxisslip>
+                            <secangularaxisslip>0.0000e+00</secangularaxisslip>
+                            <normalangularaxisslip>0.0000e+00</normalangularaxisslip>
+                            <autosleeplinearspeedthreshold>1.4000e-01</autosleeplinearspeedthreshold>
+                            <autosleeplinearaccelthreshold>4.5000e-02</autosleeplinearaccelthreshold>
+                            <autosleepangularspeedthreshold>3.0000e-02</autosleepangularspeedthreshold>
+                            <autosleepangularaccelthreshold>4.5000e-02</autosleepangularaccelthreshold>
+                            <skinthickness>2.0000e-03</skinthickness>
+                            <autoangulardampingtensionratio>1.0000e-02</autoangulardampingtensionratio>
+                            <primaxisvectorx>0.0000e+00</primaxisvectorx>
+                            <primaxisvectory>0.0000e+00</primaxisvectory>
+                            <primaxisvectorz>1.0000e+00</primaxisvectorz>
+                            <primlinearaxisfrictionmodel>4</primlinearaxisfrictionmodel>
+                            <seclinearaxisfrictionmodel>4</seclinearaxisfrictionmodel>
+                            <primangulararaxisfrictionmodel>6</primangulararaxisfrictionmodel>
+                            <secmangulararaxisfrictionmodel>6</secmangulararaxisfrictionmodel>
+                            <normalmangulararaxisfrictionmodel>6</normalmangulararaxisfrictionmodel>
+                            <autosleepsteplivethreshold>10</autosleepsteplivethreshold>
+                            <materialuniqueid>27</materialuniqueid>
+                            <pureshapesasconvex>false</pureshapesasconvex>
+                            <convexshapesasrandom>false</convexshapesasrandom>
+                            <randomshapesasterrain>false</randomshapesasterrain>
+                            <fastmoving>true</fastmoving>
+                            <autoslip>false</autoslip>
+                            <seclinaxissameasprimlinaxis>true</seclinaxissameasprimlinaxis>
+                            <secangaxissameasprimangaxis>true</secangaxissameasprimangaxis>
+                            <normangaxissameasprimangaxis>true</normangaxissameasprimangaxis>
+                            <autoangulardamping>true</autoangulardamping>
+                        </vortex>
+                        <newton>
+                            <staticfriction>1.0000e+00</staticfriction>
+                            <kineticfriction>1.0000e+00</kineticfriction>
+                            <restitution>0.0000e+00</restitution>
+                            <lineardrag>0.0000e+00</lineardrag>
+                            <angulardrag>0.0000e+00</angulardrag>
+                            <fastmoving>false</fastmoving>
+                        </newton>
+                        <mujoco>
+                            <friction>1.0000e+00 5.0000e-03 1.0000e-04</friction>
+                            <solref>2.0000e-02 1.0000e+00</solref>
+                            <solimp>9.0000e-01 9.5000e-01 1.0000e-03 5.0000e-02 2.0000e+00</solimp>
+                            <solmix>1.0000e+00</solmix>
+                            <margin>0.0000e+00</margin>
+                            <gap>0.0000e+00</gap>
+                            <gravcomp>0.0000e+00</gravcomp>
+                            <condim>3</condim>
+                            <priority>0</priority>
+                            <adhesion>false</adhesion>
+                            <adhesiongain>1.0000e+00</adhesiongain>
+                            <adhesionctrlrange>0.0000e+00 1.0000e+03</adhesionctrlrange>
+                            <adhesionforcerange>0.0000e+00 1.0000e+03</adhesionforcerange>
+                            <adhesionforcelimited>-1</adhesionforcelimited>
+                        </mujoco>
+                    </engines>
+                </material>
+            </dynamics>
+        </shape>
+    </sceneObject>
+    <sceneObject>
+        <shape>
+            <common>
                 <alias>Robot</alias>
                 <name>Robot</name>
                 <altName>shape</altName>
-                <handle>29</handle>
+                <handle>30</handle>
                 <parentHandle>-1</parentHandle>
                 <localFrame>
                     <position>0.0000e+00 0.0000e+00 -6.6000e-02</position>
@@ -6245,7 +6538,7 @@
                     <setToDynamicIfGetsParent>false</setToDynamicIfGetsParent>
                 </switches>
                 <material>
-                    <id>2290024</id>
+                    <id>2290025</id>
                     <name>usr_</name>
                     <engines>
                         <bullet>
@@ -6358,8 +6651,8 @@
                 <alias>LeftMotor</alias>
                 <name>LeftMotor</name>
                 <altName>Revolute_joint</altName>
-                <handle>30</handle>
-                <parentHandle>29</parentHandle>
+                <handle>31</handle>
+                <parentHandle>30</parentHandle>
                 <localFrame>
                     <position>8.7000e-02 -2.0000e-03 7.0000e-03</position>
                     <quaternion>7.0711e-01 0.0000e+00 7.0711e-01 0.0000e+00</quaternion>
@@ -6450,7 +6743,7 @@
             <range>3.6000e+02</range>
             <position>0.0000e+00</position>
             <targetPosition>0.0000e+00</targetPosition>
-            <targetVelocity>0.0000e+00</targetVelocity>
+            <targetVelocity>3.6000e+02</targetVelocity>
             <maxVelAccelJerk>3.6000e+02 3.6000e+02 3.6000e+02</maxVelAccelJerk>
             <screwPitch>0.0000e+00</screwPitch>
             <screwLead>0.0000e+00</screwLead>
@@ -6615,8 +6908,8 @@
                 <alias>LeftWheel</alias>
                 <name>LeftWheel</name>
                 <altName>Cylinder</altName>
-                <handle>31</handle>
-                <parentHandle>30</parentHandle>
+                <handle>32</handle>
+                <parentHandle>31</parentHandle>
                 <localFrame>
                     <position>0.0000e+00 0.0000e+00 2.1000e-02</position>
                     <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -6795,7 +7088,7 @@
                     <setToDynamicIfGetsParent>false</setToDynamicIfGetsParent>
                 </switches>
                 <material>
-                    <id>2290025</id>
+                    <id>2290026</id>
                     <name>restStackGraspMaterial</name>
                     <engines>
                         <bullet>
@@ -6908,8 +7201,8 @@
                 <alias>RightMotor</alias>
                 <name>RightMotor</name>
                 <altName>Revolute_joint0</altName>
-                <handle>32</handle>
-                <parentHandle>29</parentHandle>
+                <handle>33</handle>
+                <parentHandle>30</parentHandle>
                 <localFrame>
                     <position>-8.7000e-02 -2.0000e-03 7.0000e-03</position>
                     <quaternion>7.0711e-01 0.0000e+00 7.0711e-01 0.0000e+00</quaternion>
@@ -7000,7 +7293,7 @@
             <range>3.6000e+02</range>
             <position>0.0000e+00</position>
             <targetPosition>0.0000e+00</targetPosition>
-            <targetVelocity>0.0000e+00</targetVelocity>
+            <targetVelocity>3.6000e+02</targetVelocity>
             <maxVelAccelJerk>3.6000e+02 3.6000e+02 3.6000e+02</maxVelAccelJerk>
             <screwPitch>0.0000e+00</screwPitch>
             <screwLead>0.0000e+00</screwLead>
@@ -7048,7 +7341,7 @@
                 <ctrlMode>4</ctrlMode>
                 <posController>pid</posController>
                 <velController>none</velController>
-                <maxForce>-2.5000e+00</maxForce>
+                <maxForce>2.5000e+00</maxForce>
                 <upperVelocityLimit>3.6000e+02</upperVelocityLimit>
                 <pidValues>1.0000e-01 0.0000e+00 0.0000e+00</pidValues>
                 <kcValues>1.0000e-01 0.0000e+00</kcValues>
@@ -7165,8 +7458,8 @@
                 <alias>RightWheel</alias>
                 <name>RightWheel</name>
                 <altName>Cylinder0</altName>
-                <handle>33</handle>
-                <parentHandle>32</parentHandle>
+                <handle>34</handle>
+                <parentHandle>33</parentHandle>
                 <localFrame>
                     <position>1.5606e-13 1.7347e-18 -2.1000e-02</position>
                     <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -7345,7 +7638,7 @@
                     <setToDynamicIfGetsParent>false</setToDynamicIfGetsParent>
                 </switches>
                 <material>
-                    <id>2290026</id>
+                    <id>2290027</id>
                     <name>restStackGraspMaterial</name>
                     <engines>
                         <bullet>
@@ -7458,8 +7751,8 @@
                 <alias>TapeSensors</alias>
                 <name>TapeSensors</name>
                 <altName>dummy</altName>
-                <handle>34</handle>
-                <parentHandle>29</parentHandle>
+                <handle>35</handle>
+                <parentHandle>30</parentHandle>
                 <localFrame>
                     <position>0.0000e+00 0.0000e+00 -2.0000e-02</position>
                     <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -7601,8 +7894,8 @@
                 <alias>FrontLeft</alias>
                 <name>FrontLeft</name>
                 <altName>visionSensor</altName>
-                <handle>35</handle>
-                <parentHandle>34</parentHandle>
+                <handle>36</handle>
+                <parentHandle>35</parentHandle>
                 <localFrame>
                     <position>4.8000e-02 -1.2500e-01 0.0000e+00</position>
                     <quaternion>-1.0341e-13 -1.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -7737,8 +8030,8 @@
                 <alias>FrontRight</alias>
                 <name>FrontRight</name>
                 <altName>visionSensor0</altName>
-                <handle>36</handle>
-                <parentHandle>34</parentHandle>
+                <handle>37</handle>
+                <parentHandle>35</parentHandle>
                 <localFrame>
                     <position>-4.8000e-02 -1.2500e-01 0.0000e+00</position>
                     <quaternion>1.0341e-13 1.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -7873,8 +8166,8 @@
                 <alias>FrontMiddle</alias>
                 <name>FrontMiddle</name>
                 <altName>visionSensor1</altName>
-                <handle>37</handle>
-                <parentHandle>34</parentHandle>
+                <handle>38</handle>
+                <parentHandle>35</parentHandle>
                 <localFrame>
                     <position>0.0000e+00 -1.2500e-01 0.0000e+00</position>
                     <quaternion>1.0341e-13 1.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -8009,8 +8302,8 @@
                 <alias>RearLeft</alias>
                 <name>RearLeft</name>
                 <altName>visionSensor2</altName>
-                <handle>38</handle>
-                <parentHandle>34</parentHandle>
+                <handle>39</handle>
+                <parentHandle>35</parentHandle>
                 <localFrame>
                     <position>4.8000e-02 8.7000e-02 0.0000e+00</position>
                     <quaternion>1.0341e-13 1.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -8145,8 +8438,8 @@
                 <alias>RearRight</alias>
                 <name>RearRight</name>
                 <altName>visionSensor3</altName>
-                <handle>39</handle>
-                <parentHandle>34</parentHandle>
+                <handle>40</handle>
+                <parentHandle>35</parentHandle>
                 <localFrame>
                     <position>-4.8000e-02 8.7000e-02 0.0000e+00</position>
                     <quaternion>1.0341e-13 1.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -8281,8 +8574,8 @@
                 <alias>RearMiddle</alias>
                 <name>RearMiddle</name>
                 <altName>visionSensor4</altName>
-                <handle>40</handle>
-                <parentHandle>34</parentHandle>
+                <handle>41</handle>
+                <parentHandle>35</parentHandle>
                 <localFrame>
                     <position>0.0000e+00 1.0900e-01 0.0000e+00</position>
                     <quaternion>1.0341e-13 1.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -8417,8 +8710,8 @@
                 <alias>Top</alias>
                 <name>Top</name>
                 <altName>visionSensor5</altName>
-                <handle>41</handle>
-                <parentHandle>34</parentHandle>
+                <handle>42</handle>
+                <parentHandle>35</parentHandle>
                 <localFrame>
                     <position>1.5000e-01 5.6000e-02 1.7000e-01</position>
                     <quaternion>7.0711e-01 0.0000e+00 7.0711e-01 0.0000e+00</quaternion>
@@ -8553,8 +8846,8 @@
                 <alias>TopHolder</alias>
                 <name>TopHolder</name>
                 <altName>Cuboid</altName>
-                <handle>42</handle>
-                <parentHandle>34</parentHandle>
+                <handle>43</handle>
+                <parentHandle>35</parentHandle>
                 <localFrame>
                     <position>1.2500e-01 5.6000e-02 1.9500e-01</position>
                     <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -8733,7 +9026,7 @@
                     <setToDynamicIfGetsParent>false</setToDynamicIfGetsParent>
                 </switches>
                 <material>
-                    <id>2290027</id>
+                    <id>2290028</id>
                     <name>restStackGraspMaterial</name>
                     <engines>
                         <bullet>
@@ -8841,13 +9134,187 @@
         </shape>
     </sceneObject>
     <sceneObject>
+        <proximitySensor>
+            <common>
+                <alias>Forward</alias>
+                <name>Forward0</name>
+                <altName>proximitySensor0</altName>
+                <handle>44</handle>
+                <parentHandle>35</parentHandle>
+                <localFrame>
+                    <position>0.0000e+00 -1.4000e-01 8.7000e-02</position>
+                    <quaternion>7.0711e-01 7.0711e-01 0.0000e+00 0.0000e+00</quaternion>
+                </localFrame>
+                <assembling>
+                    <localFrame>
+                        <position>0.0000e+00 0.0000e+00 0.0000e+00</position>
+                        <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
+                    </localFrame>
+                    <matchValues>
+                        <child>default</child>
+                        <parent>default</parent>
+                    </matchValues>
+                    <localFrameIsUsed>false</localFrameIsUsed>
+                </assembling>
+                <hierarchyColorIndex>-1</hierarchyColorIndex>
+                <collectionSelfCollisionIndicator>0</collectionSelfCollisionIndicator>
+                <localObjectProperty>
+                    <hierarchyCollapsed>false</hierarchyCollapsed>
+                    <selectable>true</selectable>
+                    <selectModelBaseInstead>false</selectModelBaseInstead>
+                    <dontShowAsInsideModel>false</dontShowAsInsideModel>
+                    <selectInvisible>false</selectInvisible>
+                    <depthInvisible>false</depthInvisible>
+                    <cannotDelete>false</cannotDelete>
+                    <cannotDeleteDuringSimulation>false</cannotDeleteDuringSimulation>
+                    <ignoreViewFitting>false</ignoreViewFitting>
+                    <hiddenForSimulation>false</hiddenForSimulation>
+                </localObjectProperty>
+                <localObjectSpecialProperty>
+                    <collidable>false</collidable>
+                    <measurable>false</measurable>
+                    <detectable>false</detectable>
+                    <renderable>false</renderable>
+                    <ultrasonicDetectable>false</ultrasonicDetectable>
+                    <infraredDetectable>false</infraredDetectable>
+                    <laserDetectable>false</laserDetectable>
+                    <inductiveDetectable>false</inductiveDetectable>
+                    <capacitiveDetectable>false</capacitiveDetectable>
+                </localObjectSpecialProperty>
+                <localModelProperty>
+                    <notCollidable>false</notCollidable>
+                    <notMeasurable>false</notMeasurable>
+                    <notDetectable>false</notDetectable>
+                    <notDynamic>false</notDynamic>
+                    <notRespondable>false</notRespondable>
+                    <notReset>false</notReset>
+                    <notVisible>false</notVisible>
+                    <scriptsInactive>false</scriptsInactive>
+                    <notShowAsInsideModel>false</notShowAsInsideModel>
+                    <notRenderable>false</notRenderable>
+                </localModelProperty>
+                <layer>8</layer>
+                <childOrder>-1</childOrder>
+                <switches>
+                    <modelBase>false</modelBase>
+                </switches>
+                <manipulation>
+                    <permissions>35</permissions>
+                    <translation>
+                        <disabledDuringSimulation>false</disabledDuringSimulation>
+                        <disabledDuringNonSimulation>false</disabledDuringNonSimulation>
+                        <settingsLocked>false</settingsLocked>
+                        <relativeTo>0</relativeTo>
+                        <nonDefaultStepSize>0.0000e+00</nonDefaultStepSize>
+                    </translation>
+                    <rotation>
+                        <disabledDuringSimulation>false</disabledDuringSimulation>
+                        <disabledDuringNonSimulation>false</disabledDuringNonSimulation>
+                        <settingsLocked>false</settingsLocked>
+                        <relativeTo>2</relativeTo>
+                        <nonDefaultStepSize>0.0000e+00</nonDefaultStepSize>
+                    </rotation>
+                </manipulation>
+                <sizeFactor>1.0000e+00</sizeFactor>
+                <scriptExecPriority>1</scriptExecPriority>
+                <sizeValues>1.0000e+00 1.0000e+00 1.0000e+00</sizeValues>
+                <dnaString_base64Coded>pxv0hzd+EDDdzSE6GZLrMg==</dnaString_base64Coded>
+                <uniquePersistentString_base64Coded>MUREMDI2NDBFN0M3RThFRQ==</uniquePersistentString_base64Coded>
+                <transparentObjectDistanceOffset>0.0000e+00</transparentObjectDistanceOffset>
+                <authorizedViewableObjects>-1</authorizedViewableObjects>
+                <extensionString></extensionString>
+                <modelAcknowledgement></modelAcknowledgement>
+            </common>
+            <type>ray</type>
+            <size>1.0000e-02</size>
+            <detectableEntity>29</detectableEntity>
+            <detectionType>ultrasonic</detectionType>
+            <allowedAngle>0.0000e+00</allowedAngle>
+            <allowedNormalAngle>0.0000e+00</allowedNormalAngle>
+            <switches>
+                <showVolumeWhenNotDetecting>true</showVolumeWhenNotDetecting>
+                <closestObjectMode>true</closestObjectMode>
+                <normalCheck>false</normalCheck>
+                <frontFaceDetection>true</frontFaceDetection>
+                <backFaceDetection>true</backFaceDetection>
+                <explicitHandling>false</explicitHandling>
+            </switches>
+            <randomizedDetection>
+                <enabled>false</enabled>
+                <sampleCount>1</sampleCount>
+                <countForTrigger>1</countForTrigger>
+            </randomizedDetection>
+            <color>
+                <volume>
+                    <name></name>
+                    <extensionString>povray { pattern {default}}</extensionString>
+                    <ambient>9.0000e-01 0.0000e+00 5.0000e-01</ambient>
+                    <diffuse>0.0000e+00 0.0000e+00 0.0000e+00</diffuse>
+                    <specular>0.0000e+00 0.0000e+00 0.0000e+00</specular>
+                    <emission>0.0000e+00 0.0000e+00 0.0000e+00</emission>
+                    <temperature>0.0000e+00 0.0000e+00 0.0000e+00</temperature>
+                    <shininess>48</shininess>
+                    <transparency>5.0000e-01</transparency>
+                    <switches>
+                        <transparent>false</transparent>
+                    </switches>
+                    <flashing>
+                        <enabled>false</enabled>
+                        <inSimulationTime>false</inSimulationTime>
+                        <frequency>2.0000e+00</frequency>
+                        <ratio>5.0000e-01</ratio>
+                        <phase>0.0000e+00</phase>
+                    </flashing>
+                </volume>
+                <detectionRay>
+                    <name></name>
+                    <extensionString>povray { pattern {default}}</extensionString>
+                    <ambient>0.0000e+00 0.0000e+00 0.0000e+00</ambient>
+                    <diffuse>0.0000e+00 0.0000e+00 0.0000e+00</diffuse>
+                    <specular>0.0000e+00 0.0000e+00 0.0000e+00</specular>
+                    <emission>1.0000e+00 1.0000e+00 0.0000e+00</emission>
+                    <temperature>0.0000e+00 0.0000e+00 0.0000e+00</temperature>
+                    <shininess>48</shininess>
+                    <transparency>5.0000e-01</transparency>
+                    <switches>
+                        <transparent>false</transparent>
+                    </switches>
+                    <flashing>
+                        <enabled>false</enabled>
+                        <inSimulationTime>false</inSimulationTime>
+                        <frequency>2.0000e+00</frequency>
+                        <ratio>5.0000e-01</ratio>
+                        <phase>0.0000e+00</phase>
+                    </flashing>
+                </detectionRay>
+            </color>
+            <volume>
+                <type>ray</type>
+                <offset>0.0000e+00</offset>
+                <range>1.8300e+00</range>
+                <xySizeClose>1.0000e-05 1.0000e-05</xySizeClose>
+                <xySizeFar>1.0000e-05 1.0000e-05</xySizeFar>
+                <closeFarRadius>1.0000e-01 2.0000e-01</closeFarRadius>
+                <angle>1.0000e-03</angle>
+                <insideAngleScaling>0.0000e+00</insideAngleScaling>
+                <closeFarFaceCount>32 1024</closeFarFaceCount>
+                <closeFarSubdivisions>1024 1024</closeFarSubdivisions>
+                <smallestDistance>0.0000e+00</smallestDistance>
+                <smallestAllowedDistance>0.0000e+00</smallestAllowedDistance>
+                <switches>
+                    <smallestDistanceEnabled>false</smallestDistanceEnabled>
+                </switches>
+            </volume>
+        </proximitySensor>
+    </sceneObject>
+    <sceneObject>
         <forceSensor>
             <common>
                 <alias>SkegForce</alias>
                 <name>SkegForce</name>
                 <altName>forceSensor</altName>
-                <handle>43</handle>
-                <parentHandle>29</parentHandle>
+                <handle>45</handle>
+                <parentHandle>30</parentHandle>
                 <localFrame>
                     <position>0.0000e+00 9.0000e-02 -1.1500e-02</position>
                     <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -8975,8 +9442,8 @@
                 <alias>Skeg</alias>
                 <name>Skeg</name>
                 <altName>Sphere</altName>
-                <handle>44</handle>
-                <parentHandle>43</parentHandle>
+                <handle>46</handle>
+                <parentHandle>45</parentHandle>
                 <localFrame>
                     <position>0.0000e+00 0.0000e+00 -5.0000e-03</position>
                     <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
@@ -9155,7 +9622,7 @@
                     <setToDynamicIfGetsParent>false</setToDynamicIfGetsParent>
                 </switches>
                 <material>
-                    <id>2290028</id>
+                    <id>2290029</id>
                     <name>restStackGraspMaterial</name>
                     <engines>
                         <bullet>
@@ -9261,6 +9728,180 @@
                 </material>
             </dynamics>
         </shape>
+    </sceneObject>
+    <sceneObject>
+        <proximitySensor>
+            <common>
+                <alias>FrontBumper</alias>
+                <name>FrontBumper</name>
+                <altName>proximitySensor</altName>
+                <handle>47</handle>
+                <parentHandle>30</parentHandle>
+                <localFrame>
+                    <position>0.0000e+00 -1.3000e-01 2.0000e-03</position>
+                    <quaternion>7.0711e-01 7.0711e-01 0.0000e+00 0.0000e+00</quaternion>
+                </localFrame>
+                <assembling>
+                    <localFrame>
+                        <position>0.0000e+00 0.0000e+00 0.0000e+00</position>
+                        <quaternion>1.0000e+00 0.0000e+00 0.0000e+00 0.0000e+00</quaternion>
+                    </localFrame>
+                    <matchValues>
+                        <child>default</child>
+                        <parent>default</parent>
+                    </matchValues>
+                    <localFrameIsUsed>false</localFrameIsUsed>
+                </assembling>
+                <hierarchyColorIndex>-1</hierarchyColorIndex>
+                <collectionSelfCollisionIndicator>0</collectionSelfCollisionIndicator>
+                <localObjectProperty>
+                    <hierarchyCollapsed>false</hierarchyCollapsed>
+                    <selectable>true</selectable>
+                    <selectModelBaseInstead>false</selectModelBaseInstead>
+                    <dontShowAsInsideModel>false</dontShowAsInsideModel>
+                    <selectInvisible>false</selectInvisible>
+                    <depthInvisible>false</depthInvisible>
+                    <cannotDelete>false</cannotDelete>
+                    <cannotDeleteDuringSimulation>false</cannotDeleteDuringSimulation>
+                    <ignoreViewFitting>false</ignoreViewFitting>
+                    <hiddenForSimulation>false</hiddenForSimulation>
+                </localObjectProperty>
+                <localObjectSpecialProperty>
+                    <collidable>false</collidable>
+                    <measurable>false</measurable>
+                    <detectable>false</detectable>
+                    <renderable>false</renderable>
+                    <ultrasonicDetectable>false</ultrasonicDetectable>
+                    <infraredDetectable>false</infraredDetectable>
+                    <laserDetectable>false</laserDetectable>
+                    <inductiveDetectable>false</inductiveDetectable>
+                    <capacitiveDetectable>false</capacitiveDetectable>
+                </localObjectSpecialProperty>
+                <localModelProperty>
+                    <notCollidable>false</notCollidable>
+                    <notMeasurable>false</notMeasurable>
+                    <notDetectable>false</notDetectable>
+                    <notDynamic>false</notDynamic>
+                    <notRespondable>false</notRespondable>
+                    <notReset>false</notReset>
+                    <notVisible>false</notVisible>
+                    <scriptsInactive>false</scriptsInactive>
+                    <notShowAsInsideModel>false</notShowAsInsideModel>
+                    <notRenderable>false</notRenderable>
+                </localModelProperty>
+                <layer>8</layer>
+                <childOrder>-1</childOrder>
+                <switches>
+                    <modelBase>false</modelBase>
+                </switches>
+                <manipulation>
+                    <permissions>35</permissions>
+                    <translation>
+                        <disabledDuringSimulation>false</disabledDuringSimulation>
+                        <disabledDuringNonSimulation>false</disabledDuringNonSimulation>
+                        <settingsLocked>false</settingsLocked>
+                        <relativeTo>0</relativeTo>
+                        <nonDefaultStepSize>0.0000e+00</nonDefaultStepSize>
+                    </translation>
+                    <rotation>
+                        <disabledDuringSimulation>false</disabledDuringSimulation>
+                        <disabledDuringNonSimulation>false</disabledDuringNonSimulation>
+                        <settingsLocked>false</settingsLocked>
+                        <relativeTo>2</relativeTo>
+                        <nonDefaultStepSize>0.0000e+00</nonDefaultStepSize>
+                    </rotation>
+                </manipulation>
+                <sizeFactor>1.0000e+00</sizeFactor>
+                <scriptExecPriority>1</scriptExecPriority>
+                <sizeValues>1.0000e+00 1.0000e+00 1.0000e+00</sizeValues>
+                <dnaString_base64Coded>zTB3O9KBSnshWaBk+9wFjQ==</dnaString_base64Coded>
+                <uniquePersistentString_base64Coded>NEFEODc4QkVGMzU2NEUxQg==</uniquePersistentString_base64Coded>
+                <transparentObjectDistanceOffset>0.0000e+00</transparentObjectDistanceOffset>
+                <authorizedViewableObjects>-1</authorizedViewableObjects>
+                <extensionString></extensionString>
+                <modelAcknowledgement></modelAcknowledgement>
+            </common>
+            <type>ray</type>
+            <size>1.0000e-02</size>
+            <detectableEntity>29</detectableEntity>
+            <detectionType>ultrasonic</detectionType>
+            <allowedAngle>0.0000e+00</allowedAngle>
+            <allowedNormalAngle>0.0000e+00</allowedNormalAngle>
+            <switches>
+                <showVolumeWhenNotDetecting>true</showVolumeWhenNotDetecting>
+                <closestObjectMode>true</closestObjectMode>
+                <normalCheck>false</normalCheck>
+                <frontFaceDetection>true</frontFaceDetection>
+                <backFaceDetection>true</backFaceDetection>
+                <explicitHandling>false</explicitHandling>
+            </switches>
+            <randomizedDetection>
+                <enabled>false</enabled>
+                <sampleCount>1</sampleCount>
+                <countForTrigger>1</countForTrigger>
+            </randomizedDetection>
+            <color>
+                <volume>
+                    <name></name>
+                    <extensionString>povray { pattern {default}}</extensionString>
+                    <ambient>9.0000e-01 0.0000e+00 5.0000e-01</ambient>
+                    <diffuse>0.0000e+00 0.0000e+00 0.0000e+00</diffuse>
+                    <specular>0.0000e+00 0.0000e+00 0.0000e+00</specular>
+                    <emission>0.0000e+00 0.0000e+00 0.0000e+00</emission>
+                    <temperature>0.0000e+00 0.0000e+00 0.0000e+00</temperature>
+                    <shininess>48</shininess>
+                    <transparency>5.0000e-01</transparency>
+                    <switches>
+                        <transparent>false</transparent>
+                    </switches>
+                    <flashing>
+                        <enabled>false</enabled>
+                        <inSimulationTime>false</inSimulationTime>
+                        <frequency>2.0000e+00</frequency>
+                        <ratio>5.0000e-01</ratio>
+                        <phase>0.0000e+00</phase>
+                    </flashing>
+                </volume>
+                <detectionRay>
+                    <name></name>
+                    <extensionString>povray { pattern {default}}</extensionString>
+                    <ambient>0.0000e+00 0.0000e+00 0.0000e+00</ambient>
+                    <diffuse>0.0000e+00 0.0000e+00 0.0000e+00</diffuse>
+                    <specular>0.0000e+00 0.0000e+00 0.0000e+00</specular>
+                    <emission>1.0000e+00 1.0000e+00 0.0000e+00</emission>
+                    <temperature>0.0000e+00 0.0000e+00 0.0000e+00</temperature>
+                    <shininess>48</shininess>
+                    <transparency>5.0000e-01</transparency>
+                    <switches>
+                        <transparent>false</transparent>
+                    </switches>
+                    <flashing>
+                        <enabled>false</enabled>
+                        <inSimulationTime>false</inSimulationTime>
+                        <frequency>2.0000e+00</frequency>
+                        <ratio>5.0000e-01</ratio>
+                        <phase>0.0000e+00</phase>
+                    </flashing>
+                </detectionRay>
+            </color>
+            <volume>
+                <type>ray</type>
+                <offset>0.0000e+00</offset>
+                <range>1.0000e-02</range>
+                <xySizeClose>1.0000e-05 1.0000e-05</xySizeClose>
+                <xySizeFar>1.0000e-05 1.0000e-05</xySizeFar>
+                <closeFarRadius>1.0000e-01 2.0000e-01</closeFarRadius>
+                <angle>1.0000e-03</angle>
+                <insideAngleScaling>0.0000e+00</insideAngleScaling>
+                <closeFarFaceCount>32 1</closeFarFaceCount>
+                <closeFarSubdivisions>1024 0</closeFarSubdivisions>
+                <smallestDistance>0.0000e+00</smallestDistance>
+                <smallestAllowedDistance>0.0000e+00</smallestAllowedDistance>
+                <switches>
+                    <smallestDistanceEnabled>false</smallestDistanceEnabled>
+                </switches>
+            </volume>
+        </proximitySensor>
     </sceneObject>
     <ghosts/>
     <settings>
@@ -9502,37 +10143,7 @@
                     </switches>
                 </view>
                 <view>
-                    <linkedObjectHandle>36</linkedObjectHandle>
-                    <renderMode>0</renderMode>
-                    <switches>
-                        <perspective>true</perspective>
-                        <viewCanBeSwapped>true</viewCanBeSwapped>
-                        <viewCanBeClosed>true</viewCanBeClosed>
-                        <canBeShifted>true</canBeShifted>
-                        <canBeResized>true</canBeResized>
-                        <showEdges>true</showEdges>
-                        <thickEdges>false</thickEdges>
-                        <fitSceneToView>false</fitSceneToView>
-                        <fitSelectionToView>false</fitSelectionToView>
-                    </switches>
-                </view>
-                <view>
                     <linkedObjectHandle>37</linkedObjectHandle>
-                    <renderMode>0</renderMode>
-                    <switches>
-                        <perspective>true</perspective>
-                        <viewCanBeSwapped>true</viewCanBeSwapped>
-                        <viewCanBeClosed>true</viewCanBeClosed>
-                        <canBeShifted>true</canBeShifted>
-                        <canBeResized>true</canBeResized>
-                        <showEdges>true</showEdges>
-                        <thickEdges>false</thickEdges>
-                        <fitSceneToView>false</fitSceneToView>
-                        <fitSelectionToView>false</fitSelectionToView>
-                    </switches>
-                </view>
-                <view>
-                    <linkedObjectHandle>41</linkedObjectHandle>
                     <renderMode>0</renderMode>
                     <switches>
                         <perspective>true</perspective>
@@ -9561,7 +10172,37 @@
                         <fitSelectionToView>false</fitSelectionToView>
                     </switches>
                 </view>
-                <sizesAndPositions>2.5000e-01 2.5000e-01 5.0000e-02 5.0000e-02 1.6810e-01 2.3656e-01 1.0057e-02 9.5579e-03 1.5589e-01 2.3656e-01 1.8606e-01 8.3632e-03 1.6595e-01 2.1625e-01 8.6207e-03 2.6404e-01 1.5876e-01 2.3656e-01 3.4698e-01 7.1685e-03</sizesAndPositions>
+                <view>
+                    <linkedObjectHandle>39</linkedObjectHandle>
+                    <renderMode>0</renderMode>
+                    <switches>
+                        <perspective>true</perspective>
+                        <viewCanBeSwapped>true</viewCanBeSwapped>
+                        <viewCanBeClosed>true</viewCanBeClosed>
+                        <canBeShifted>true</canBeShifted>
+                        <canBeResized>true</canBeResized>
+                        <showEdges>true</showEdges>
+                        <thickEdges>false</thickEdges>
+                        <fitSceneToView>false</fitSceneToView>
+                        <fitSelectionToView>false</fitSelectionToView>
+                    </switches>
+                </view>
+                <view>
+                    <linkedObjectHandle>42</linkedObjectHandle>
+                    <renderMode>0</renderMode>
+                    <switches>
+                        <perspective>true</perspective>
+                        <viewCanBeSwapped>true</viewCanBeSwapped>
+                        <viewCanBeClosed>true</viewCanBeClosed>
+                        <canBeShifted>true</canBeShifted>
+                        <canBeResized>true</canBeResized>
+                        <showEdges>true</showEdges>
+                        <thickEdges>false</thickEdges>
+                        <fitSceneToView>false</fitSceneToView>
+                        <fitSelectionToView>false</fitSelectionToView>
+                    </switches>
+                </view>
+                <sizesAndPositions>2.5000e-01 2.5000e-01 5.0000e-02 5.0000e-02 1.6810e-01 2.3656e-01 1.0057e-02 9.5579e-03 1.5589e-01 2.3656e-01 1.8032e-01 9.5579e-03 1.5876e-01 2.3656e-01 3.3764e-01 9.5579e-03 1.6595e-01 2.1625e-01 8.6207e-03 2.6404e-01</sizesAndPositions>
             </page>
         </pageWrapper>
         <pageWrapper>
@@ -9848,7 +10489,7 @@
         </pageWrapper>
     </views>
     <script>
-        <handle>1010079</handle>
+        <handle>1010076</handle>
         <objectHandle>-1</objectHandle>
         <type>mainScript</type>
         <switches>

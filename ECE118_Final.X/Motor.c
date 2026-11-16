@@ -72,8 +72,13 @@ void Motor_SetRightDirection(unsigned char forward) {
     RIGHT_IN4_LAT = !forward;
 }
 
+void Motor_Direction(unsigned char direction) {
+    Motor_SetLeftDirection(direction);
+    Motor_SetRightDirection(direction);
+}
+
 void Motor_SetLeftSpeed(unsigned int speed) {
-    // Limit speed to 100% PWM
+    // Limit speed to 1000 PWM
     if (speed > MAX_PWM) {
         speed = MAX_PWM;
     }
@@ -82,12 +87,33 @@ void Motor_SetLeftSpeed(unsigned int speed) {
 }
 
 void Motor_SetRightSpeed(unsigned int speed) {
-    // Limit speed to 100% PWM
+    // Limit speed to 1000 PWM
     if (speed > MAX_PWM) {
         speed = MAX_PWM;
     }
 
     PWM_SetDutyCycle(RIGHT_PWM, speed);
+}
+
+void Motor_Speed(unsigned int speed) {
+    Motor_SetLeftSpeed(speed);
+    Motor_SetRightSpeed(speed);
+}
+
+void Motor_Forward(unsigned int speed) {
+    Motor_Direction(FORWARD);
+    Motor_Speed(speed);
+}
+
+void Motor_Reverse(unsigned int speed) {
+    Motor_Direction(REVERSE);
+    Motor_Speed(speed);
+}
+
+void Motor_TurnRight(unsigned int speed) {
+    Motor_SetLeftDirection(FORWARD);
+    Motor_SetRightDirection(REVERSE);
+    Motor_Speed(speed);
 }
 
 void Motor_Stop(void) {

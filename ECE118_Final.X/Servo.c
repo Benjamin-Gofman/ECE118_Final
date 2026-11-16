@@ -11,16 +11,16 @@
 #define SERVO_3_PIN RC_PORTW07
 
 // Servo 1 positions in microseconds
-#define SERVO_1_CLOSED_PULSE 1500u
-#define SERVO_1_OPEN_PULSE   1700u
+#define SERVO_1_CLOSED_PULSE 1500
+#define SERVO_1_OPEN_PULSE   1700
 
 // Servo 2 positions in microseconds
-#define SERVO_2_CLOSED_PULSE 1500u
-#define SERVO_2_OPEN_PULSE   1700u
+#define SERVO_2_CLOSED_PULSE 1500
+#define SERVO_2_OPEN_PULSE   1700
 
 // Servo 3 positions in microseconds
-#define SERVO_3_CLOSED_PULSE 1500u
-#define SERVO_3_OPEN_PULSE   1700u
+#define SERVO_3_CLOSED_PULSE 1500
+#define SERVO_3_OPEN_PULSE   1700
 
 void Servo1_Open(void) {
     // Move servo 1 to its open position

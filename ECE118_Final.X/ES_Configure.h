@@ -19,8 +19,8 @@ typedef enum {
 #define SERV_0_QUEUE_SIZE 9               // ES_Framework.c, queue size for service 0
 
 // Timer slots used by Navigation
-#define NAV_TIMER         0u             // Navigation.c, schedule the next 10 ms update
-#define STEP_TIMER        1u             // Navigation.c, time the current maneuver
+#define NAV_TIMER         0              // Navigation.c, schedule the next 10 ms update
+#define STEP_TIMER        1              // Navigation.c, time the current maneuver
 #define TIMER0_RESP_FUNC  PostNavigation // ES_Timers.c, send slot 0 events to Navigation
 #define TIMER1_RESP_FUNC  PostNavigation // ES_Timers.c, send slot 1 events to Navigation
 

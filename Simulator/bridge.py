@@ -1,6 +1,6 @@
 """Transport-only bridge between CoppeliaSim and the original ECE118 C navigation.
 
-Reads six downward-facing vision sensors and detects white banner pixels.
+Reads six downward-facing vision sensors and one banner-facing sensor.
 Calls the compiled C controller with seven digital inputs and applies C motor PWM.
 No navigation logic or movement sequence is implemented in Python.
 """
@@ -12,6 +12,55 @@ import math
 import sys
 import time
 from pathlib import Path
+
+
+# Assign a consistent terminal color to each navigation state.
+STATE_COLORS = {
+    'FIND_TAPE': '36',          # Cyan
+    'FOLLOW_TAPE': '32',        # Green
+    'BUMPED': '91',             # Bright red
+    'SHOOT_AT_TOWER': '35',     # Magenta
+    'FIND_OPPONENT': '34',      # Blue
+    'OPP_SEARCH': '94',         # Bright blue
+    'OPP_APPROACH': '92',       # Bright green
+    'OPP_BACKOFF': '93',        # Bright yellow
+    'OPP_SPINUP': '95',         # Bright magenta
+    'OPP_SHOOT': '96',          # Bright cyan
+    'OPP_DONE': '37',           # White
+    'OPP_FAILED': '91',         # Bright red
+    'APPROACH_OPPONENT': '92',  # Bright green
+    'COLLISION_BACKOFF': '93',  # Bright yellow
+    'SHOOT_AT_OPPONENT': '96',  # Bright cyan
+    'DONE': '37',               # White
+}
+
+
+def enable_state_colors():
+    """Enable ANSI colors in Windows consoles when supported."""
+    if not sys.stdout.isatty():
+        return False
+    if sys.platform != 'win32':
+        return True
+    try:
+        kernel32 = ctypes.windll.kernel32
+        handle = kernel32.GetStdHandle(-11)  # STD_OUTPUT_HANDLE
+        mode = ctypes.c_ulong()
+        if not kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+            return False
+        return bool(kernel32.SetConsoleMode(handle, mode.value | 0x0004))
+    except (AttributeError, OSError):
+        return False
+
+
+def colored_state(state):
+    """Color only the state name; leave the rest of the log unchanged."""
+    color = STATE_COLORS.get(state)
+    if not STATE_COLOR_ENABLED or color is None:
+        return state
+    return f'\x1b[{color}m{state}\x1b[0m'
+
+
+STATE_COLOR_ENABLED = False
 
 
 def get_remote_client():
@@ -40,6 +89,7 @@ def get_binary_sensor(sim, sensor, threshold, detected_when_dark):
     mean_brightness = sum(image) / len(image)
     detected = mean_brightness < threshold if detected_when_dark else mean_brightness > threshold
     return int(detected), mean_brightness
+
 
 
 def get_white_banner_sensor(sim, sensor, rgb_min, min_fraction):
@@ -73,6 +123,20 @@ def get_white_banner_sensor(sim, sensor, rgb_min, min_fraction):
 
 
 
+def optional_proximity_sensor(sim, path):
+    """Look up an optional opponent or bumper proximity sensor."""
+    try:
+        return sim.getObject(path)
+    except Exception:
+        return None
+
+
+def proximity_detected(sim, handle):
+    """Read the first (detection state) result from a CoppeliaSim proximity sensor."""
+    result = sim.readProximitySensor(handle)
+    return int(bool(result[0] if isinstance(result, (list, tuple)) else result))
+
+
 def space_pressed():
     """Read Space without blocking the CoppeliaSim bridge (Windows console).
 
@@ -95,6 +159,8 @@ def space_pressed():
 
 
 def main():
+    global STATE_COLOR_ENABLED
+    STATE_COLOR_ENABLED = enable_state_colors()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--seconds', type=float, default=120.0, help='Simulation duration')
     parser.add_argument('--rpm-full', type=float, default=100.0,
@@ -104,14 +170,14 @@ def main():
     parser.add_argument('--tape-threshold', type=float, default=110.0,
                         help='Mean RGB threshold for dark tape (calibrate for your scene)')
     parser.add_argument('--banner-white-min', type=int, default=180,
-                        help='Minimum value for EACH RGB channel of a white pixel (0-255)')
+                        help='Minimum value in each RGB channel for white')
     parser.add_argument('--banner-min-fraction', type=float, default=0.05,
-                        help='Minimum image fraction consisting of white pixels (0.0-1.0)')
+                        help='Minimum fraction of white pixels in Top camera')
     args = parser.parse_args()
     if not 0 <= args.banner_white_min <= 255:
-        parser.error('--banner-white-min must be between 0 and 255')
-    if not 0.0 < args.banner_min_fraction <= 1.0:
-        parser.error('--banner-min-fraction must be greater than 0 and at most 1')
+        parser.error('--banner-white-min must be 0..255')
+    if not 0 < args.banner_min_fraction <= 1:
+        parser.error('--banner-min-fraction must be (0,1]')
 
     # Link the Python transport to the compiled, original C navigation.
     lib = Path(__file__).resolve().parent / (
@@ -124,10 +190,17 @@ def main():
     dll.SimHost_Init.restype = None
     dll.SimHost_SetSensors.argtypes = [ctypes.c_ubyte] * 7
     dll.SimHost_SetSensors.restype = None
+    dll.SimHost_SetOpponentDetected.argtypes = [ctypes.c_ubyte]
+    dll.SimHost_SetOpponentDetected.restype = None
+    dll.SimHost_SetBumperPressed.argtypes = [ctypes.c_ubyte]
+    dll.SimHost_SetBumperPressed.restype = None
     dll.SimHost_Step.argtypes = [ctypes.c_double]
     dll.SimHost_Step.restype = None
     dll.SimHost_GetMotors.argtypes = [ctypes.POINTER(ctypes.c_int)] * 2
     dll.SimHost_GetMotors.restype = None
+    # The returned string is owned by the C library; ctypes decodes a copy.
+    dll.SimHost_GetStateName.argtypes = []
+    dll.SimHost_GetStateName.restype = ctypes.c_char_p
 
     client = get_remote_client()
     sim = client.require('sim')
@@ -148,14 +221,29 @@ def main():
     # 'Top' is the actual banner vision sensor name in Robot.simscene.xml.
     BANNER = sim.getObject('/Robot/TapeSensors/Top')
 
+    # Optional proximity sensors: missing objects are reported as N/A in the log.
+    OPPONENT_DETECTOR = optional_proximity_sensor(sim, '/Robot/TapeSensors/Forward')
+    FRONT_BUMPER = optional_proximity_sensor(sim, '/Robot/FrontBumper')
+
+    if OPPONENT_DETECTOR is not None and sim.getObjectType(OPPONENT_DETECTOR) != sim.object_proximitysensor_type:
+        raise SystemExit('Robot/TapeSensors/Forward exists but is not a Proximity Sensor. '
+                         'Change Forward to a Ray Proximity Sensor or provide a vision classifier.')
+    if FRONT_BUMPER is not None and sim.getObjectType(FRONT_BUMPER) != sim.object_proximitysensor_type:
+        raise SystemExit('Robot/FrontBumper exists but is not a Proximity Sensor.')
+
     if sim.getSimulationState() != sim.simulation_stopped:
         raise SystemExit('Stop the scene simulation before starting bridge.py')
 
-    print('Connected: LeftMotor, RightMotor, six tape sensors, Top (white banner RGB)')
+    print('Connected: LeftMotor, RightMotor, six tape sensors, Top (white RGB banner)')
+    print('Forward:', 'connected' if OPPONENT_DETECTOR is not None else 'MISSING (OPP=N/A)')
+    print('FrontBumper:', 'connected' if FRONT_BUMPER is not None else 'MISSING (BUMPER=N/A)')
     print('Controls: SPACE = pause/resume, Ctrl+C = exit (Windows terminal).')
     client.setStepping(True)
     left_pwm, right_pwm = ctypes.c_int(), ctypes.c_int()
     previous_log_bucket = -1
+    previous_state = None
+    previous_bumper = None
+    previous_opponent = None
     paused = False
     dll.SimHost_Init()
     sim.startSimulation()
@@ -175,7 +263,7 @@ def main():
 
             # Read all seven sensors BEFORE running the C navigation tick.
             # This order matches TapeSensor_ReadValues() in your C project.
-            tape_readings = [
+            readings = [
                 get_binary_sensor(sim, FRONT_LEFT, args.tape_threshold, True),
                 get_binary_sensor(sim, FRONT_MIDDLE, args.tape_threshold, True),
                 get_binary_sensor(sim, FRONT_RIGHT, args.tape_threshold, True),
@@ -183,14 +271,29 @@ def main():
                 get_binary_sensor(sim, REAR_MIDDLE, args.tape_threshold, True),
                 get_binary_sensor(sim, REAR_RIGHT, args.tape_threshold, True),
             ]
-            # Only the Top sensor uses white RGB pixel detection.
             banner_bit, banner_brightness, banner_white_fraction = get_white_banner_sensor(
-                sim, BANNER, args.banner_white_min, args.banner_min_fraction
-            )
-            bits = [bit for bit, _ in tape_readings] + [banner_bit]
+                sim, BANNER, args.banner_white_min, args.banner_min_fraction)
+            bits = [v for v, brightness in readings] + [banner_bit]
             dll.SimHost_SetSensors(*bits)
+            # Forward raw digital readings to C; interpretation stays in Opponent.c.
+            opp = proximity_detected(sim, OPPONENT_DETECTOR) if OPPONENT_DETECTOR is not None else 0
+            bumper = proximity_detected(sim, FRONT_BUMPER) if FRONT_BUMPER is not None else 0
+            # Print sensor transitions immediately, even between periodic log lines.
+            if FRONT_BUMPER is not None and previous_bumper is not None and bumper != previous_bumper:
+                print(f't={now:6.2f}s  BUMPER {previous_bumper} -> {bumper}', flush=True)
+            if OPPONENT_DETECTOR is not None and previous_opponent is not None and opp != previous_opponent:
+                print(f't={now:6.2f}s  OPP {previous_opponent} -> {opp}', flush=True)
+            previous_bumper = bumper
+            previous_opponent = opp
+            dll.SimHost_SetOpponentDetected(opp)
+            dll.SimHost_SetBumperPressed(bumper)
             dll.SimHost_Step(now)  # Executes Navigation.c (motor steering is handled by Linefollowing.c).
             dll.SimHost_GetMotors(ctypes.byref(left_pwm), ctypes.byref(right_pwm))
+            # Observe C state after the navigation tick; no control decisions in Python.
+            state = dll.SimHost_GetStateName().decode('ascii')
+            if state != previous_state:
+                print(f't={now:6.2f}s  STATE {colored_state(previous_state or "START")} -> {colored_state(state)}', flush=True)
+                previous_state = state
 
             # PWM -> joint angular speed. This is transport mapping, NOT navigation.
             radians_per_sec_full = args.rpm_full * 2.0 * math.pi / 60.0
@@ -199,13 +302,20 @@ def main():
             sim.setJointTargetVelocity(LEFT_MOTOR, left_speed)
             sim.setJointTargetVelocity(RIGHT_MOTOR, right_speed)
 
+            # Stop the game as soon as the C navigation reaches DONE.
+            if state == 'DONE':
+                print(f't={now:6.2f}s  GAME OVER - DONE. Motors stopped; ending simulation.', flush=True)
+                break
+
             # Print both raw brightness and digital readings for calibration.
             bucket = int(now * 2.0)
             if bucket != previous_log_bucket:
-                avg = [round(brightness, 1) for _, brightness in tape_readings]
-                avg.append(round(banner_brightness, 1))
+                avg = [round(b, 1) for bit, b in readings]
                 print(f't={now:6.2f}s  sensors FL FM FR RL RM RR TOP={bits}'
-                      f'  brightness={avg}  TOP white={banner_white_fraction:.1%}'
+                      f'  brightness={avg}'
+                      f'  OPP={opp if OPPONENT_DETECTOR is not None else "N/A"}'
+                      f'  BUMPER={bumper if FRONT_BUMPER is not None else "N/A"}'
+                      f'  STATE={colored_state(state)}'
                       f'  C PWM L/R={left_pwm.value:+d}/{right_pwm.value:+d}')
                 previous_log_bucket = bucket
 

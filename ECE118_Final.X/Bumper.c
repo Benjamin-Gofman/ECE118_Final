@@ -8,14 +8,12 @@
 #define RIGHT_BUMPER_TRIS PORTY05_TRIS
 #define RIGHT_BUMPER_BIT  PORTY05_BIT
 
-#define SLOW_PWM    150u
-#define BACKUP_MS   600u
-#define TURN_MS     600u
-#define FORWARD_MS 1000u
+#define BACKUP_MS   600
+#define TURN_MS     600
+#define FORWARD_MS 1000
 
 typedef enum {
     BACK_UP,
-    SHOOT_OPPONENT,
     GO_RIGHT,
     GO_FORWARD,
     GO_LEFT
@@ -23,11 +21,13 @@ typedef enum {
 
 static BumperState bumperState = BACK_UP;
 static uint32_t stepStart = 0;
+static unsigned char previousBumperPressed = 0;
 
 void Bumper_Init(void) {
     // Set pins as inputs
     LEFT_BUMPER_TRIS = 1;
     RIGHT_BUMPER_TRIS = 1;
+    previousBumperPressed = 0;
 }
 
 unsigned char Bumper_IsPressed(void) {
@@ -35,35 +35,22 @@ unsigned char Bumper_IsPressed(void) {
     return LEFT_BUMPER_BIT == 0 || RIGHT_BUMPER_BIT == 0;
 }
 
+unsigned char Bumper_NewPress(void) {
+    // Check for a new bumper press
+    unsigned char pressed = Bumper_IsPressed();
+    unsigned char newPress = pressed && !previousBumperPressed;
+    previousBumperPressed = pressed;
+    return newPress;
+}
+
 void StartBumperRecovery(uint32_t now) {
     bumperState = BACK_UP;
 
     // Stop and back up
     Motor_Stop();
-    Motor_SetLeftDirection(REVERSE);
-    Motor_SetRightDirection(REVERSE);
-    Motor_SetLeftSpeed(SLOW_PWM);
-    Motor_SetRightSpeed(SLOW_PWM);
+    Motor_Reverse(SLOW_PWM);
 
     // Start the backup timer
-    stepStart = now;
-}
-
-unsigned char Bumper_IsShooting(void) {
-    // Return 1 during the shooting step
-    return bumperState == SHOOT_OPPONENT;
-}
-
-void Bumper_ShootingComplete(uint32_t now) {
-    // Start turning right after shooting
-    Motor_Stop();
-    Motor_SetLeftDirection(FORWARD);
-    Motor_SetRightDirection(FORWARD);
-    Motor_SetLeftSpeed(SLOW_PWM);
-    Motor_SetRightSpeed(0);
-
-    bumperState = GO_RIGHT;
-    // Start the right-turn timer
     stepStart = now;
 }
 
@@ -71,20 +58,20 @@ unsigned char RunBumperRecovery(uint32_t now) {
     switch (bumperState) {
         case BACK_UP:
             if ((uint32_t) (now - stepStart) >= BACKUP_MS) {
-                // Back up then stop
+                // Back up, then turn right around the obstacle.
                 Motor_Stop();
-                bumperState = SHOOT_OPPONENT;
+                Motor_Forward(SLOW_PWM);
+                Motor_SetRightSpeed(0);
+                bumperState = GO_RIGHT;
+                // Start the right-turn timer
+                stepStart = now;
             }
-            break;
-
-        case SHOOT_OPPONENT:
-            // Wait for Navigation.c to finish shooting
             break;
 
         case GO_RIGHT:
             if ((uint32_t) (now - stepStart) >= TURN_MS) {
                 // Start driving forward with both wheels
-                Motor_SetRightSpeed(SLOW_PWM);
+                Motor_Forward(SLOW_PWM);
                 bumperState = GO_FORWARD;
                 // Start the forward timer
                 stepStart = now;
