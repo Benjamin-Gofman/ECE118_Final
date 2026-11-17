@@ -3,10 +3,10 @@
 #include "Bumper.h"
 #include "Motor.h"
 
-#define LEFT_BUMPER_TRIS  PORTY03_TRIS
-#define LEFT_BUMPER_BIT   PORTY03_BIT
-#define RIGHT_BUMPER_TRIS PORTY05_TRIS
-#define RIGHT_BUMPER_BIT  PORTY05_BIT
+#define LEFT_BUMPER_TRIS  PORTV03_TRIS
+#define LEFT_BUMPER_BIT   PORTV03_BIT
+#define RIGHT_BUMPER_TRIS PORTV05_TRIS
+#define RIGHT_BUMPER_BIT  PORTV05_BIT
 
 #define BACKUP_MS   600
 #define TURN_MS     600
@@ -30,17 +30,23 @@ void Bumper_Init(void) {
     previousBumperPressed = 0;
 }
 
+static unsigned char previousPressedBumpers = 0;
+
+static unsigned char ReadPressedBumpers(void) {
+    unsigned char leftPressed = (LEFT_BUMPER_BIT == 0);
+    unsigned char rightPressed = (RIGHT_BUMPER_BIT == 0);
+    return leftPressed | (rightPressed << 1);
+}
+
 unsigned char Bumper_IsPressed(void) {
-    // Return 1 if either bumper is pressed, 0 otherwise
-    return LEFT_BUMPER_BIT == 0 || RIGHT_BUMPER_BIT == 0;
+    return ReadPressedBumpers() != 0;
 }
 
 unsigned char Bumper_NewPress(void) {
-    // Check for a new bumper press
-    unsigned char pressed = Bumper_IsPressed();
-    unsigned char newPress = pressed && !previousBumperPressed;
-    previousBumperPressed = pressed;
-    return newPress;
+    unsigned char pressedBumpers = ReadPressedBumpers();
+    unsigned char newlyPressed = pressedBumpers & ~previousPressedBumpers;
+    previousPressedBumpers = pressedBumpers;
+    return newlyPressed != 0;
 }
 
 void StartBumperRecovery(uint32_t now) {

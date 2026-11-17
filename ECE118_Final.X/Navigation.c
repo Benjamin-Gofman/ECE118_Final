@@ -37,6 +37,7 @@ static unsigned int towerCount = 0; // Number of towers scored
 static unsigned int lastTowerShotAt = 0; // Prevent shooting twice at the same tower
 static unsigned char bannerArmed = 1; // Prevent shooting twice at the same tower
 static unsigned char ballReleased = 0; // Ball not released
+static unsigned char drivingInReverse = 0;
 static uint8_t navigationPriority;
 
 #ifdef SIMULATOR
@@ -167,36 +168,47 @@ static void UpdateNavigation(uint32_t now) {
     }
 
     // Search for tape until the front sensors detect it
-    if (movement == FIND_TAPE) {
-        FindingTape(onTape);
-        if (movement == FIND_TAPE) {
-            return;
+    if (drivingInReverse) {
+        // FL, FM, FR, RL, RM, RR become RR, RM, RL, FR, FM, FL.
+        for (unsigned int i = 0; i < 3; i++) {
+            unsigned char saved = onTape[i];
+            onTape[i] = onTape[5 - i];
+            onTape[5 - i] = saved;
         }
     }
 
-    // Drive straight if all three front sensors see white
     if (!onTape[0] && !onTape[1] && !onTape[2]) {
         movement = FIND_TAPE;
-        Motor_Forward(DRIVE_PWM);
+
+        if (drivingInReverse) {
+            Motor_Reverse(DRIVE_PWM);
+        } else {
+            Motor_Forward(DRIVE_PWM);
+        }
         return;
     }
 
-    LineFollowing(onTape);
+    movement = FOLLOW_TAPE;
+    LineFollowing(onTape, drivingInReverse);
 }
 
 /* ES_CheckEvents.c, detects bumper presses and posts events */
 uint8_t CheckNavigationEvents(void) {
-    // Only post one event for each physical bumper press
+    static uint8_t bumperEventPending = 0;
+
     if (Bumper_NewPress()) {
+        bumperEventPending = 1;
+    }
+
+    if (bumperEventPending) {
         ES_Event event = {NAV_BUMPER_PRESSED, 0};
 
-        // Post event to Navigation and retry if the queue is full
-        if (!PostNavigation(event)) {
-            return 0;
+        if (PostNavigation(event)) {
+            bumperEventPending = 0;
+            return 1;
         }
-
-        return 1;
     }
+
     return 0;
 }
 
@@ -220,23 +232,23 @@ ES_Event RunNavigation(ES_Event event) {
     // Initialize the 10 ms navigation timer
     if (event.EventType == ES_INIT) {
         movement = FIND_TAPE;
+        drivingInReverse = 0;
         stepStart = ES_Timer_GetTime();
         bannerLowSince = TIMER_INACTIVE;
         ES_Timer_InitTimer(NAV_TIMER, SAMPLE_MS);
 
         // Handle bumper press event
     } else if (event.EventType == NAV_BUMPER_PRESSED) {
-        // Start recovery if not already recovering
         if (movement == FIND_OPPONENT) {
             Opponent_OnBumperPress(ES_Timer_GetTime());
-        } else if (movement != BUMPED && movement != DONE) {
-            // Stop tower feeding while recovering from an obstacle.
+        } else if (movement != DONE) {
+            Motor_Stop();
             Servo2_Close();
             ballReleased = 0;
-            // Forget the banner
 
-            movement = BUMPED;
-            StartBumperRecovery(ES_Timer_GetTime());
+            drivingInReverse = !drivingInReverse;
+            movement = FIND_TAPE;
+            UpdateNavigation(ES_Timer_GetTime());
         }
 
         // Update navigation every 10 ms and restart the timer

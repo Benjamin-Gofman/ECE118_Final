@@ -1,52 +1,38 @@
 #include "LineFollowing.h"
 #include "Motor.h"
 
-typedef enum {
-    DRIVE_FORWARD,
-    ADJUST,
-    TURN_RIGHT
-} LineState;
-
-static LineState lineState = DRIVE_FORWARD;
-
-void LineFollowing(unsigned char onTape[6]) {
-    unsigned char frontMiddle = onTape[1];
-
-    // Turn right if either outer front sensor detects tape
+void LineFollowing(const unsigned char onTape[6],
+                   unsigned char drivingInReverse) {
     if (onTape[0] || onTape[2]) {
-        lineState = TURN_RIGHT;
-    } else if (!frontMiddle) {
-        // Drive forward if no front tape is detected
-        lineState = DRIVE_FORWARD;
-    } else {
-        // Adjust direction when only the front middle detects tape
-        lineState = ADJUST;
+        if (drivingInReverse) {
+            // Pivot left: physical left wheel back, right wheel forward.
+            Motor_SetLeftDirection(REVERSE);
+            Motor_SetRightDirection(FORWARD);
+            Motor_Speed(SLOW_PWM);
+        } else {
+            Motor_TurnRight(SLOW_PWM);
+        }
+        return;
     }
 
-    switch (lineState) {
-        case DRIVE_FORWARD:
-            Motor_Forward(DRIVE_PWM);
-            break;
+    unsigned int travelLeft = onTape[1] ? SLOW_PWM : DRIVE_PWM;
+    unsigned int travelRight = travelLeft;
 
-        case ADJUST:
-            // Use rear sensors to adjust direction
-            Motor_Direction(FORWARD);
+    if (onTape[1]) {
+        if (onTape[3] && !onTape[5]) {
+            travelLeft = 0;
+        } else if (onTape[5] && !onTape[3]) {
+            travelRight = 0;
+        }
+    }
 
-            if (onTape[3] && !onTape[5]) {
-                Motor_SetLeftSpeed(0);
-                Motor_SetRightSpeed(SLOW_PWM);
-            } else if (onTape[5] && !onTape[3]) {
-                Motor_SetLeftSpeed(SLOW_PWM);
-                Motor_SetRightSpeed(0);
-            } else {
-                // Move slowly if neither rear sensor gives a direction
-                Motor_Forward(SLOW_PWM);
-            }
-            break;
-
-        case TURN_RIGHT:
-            // Pivot right while an outer front sensor detects tape
-            Motor_TurnRight(SLOW_PWM);
-            break;
+    if (drivingInReverse) {
+        Motor_Direction(REVERSE);
+        Motor_SetLeftSpeed(travelRight);
+        Motor_SetRightSpeed(travelLeft);
+    } else {
+        Motor_Direction(FORWARD);
+        Motor_SetLeftSpeed(travelLeft);
+        Motor_SetRightSpeed(travelRight);
     }
 }
