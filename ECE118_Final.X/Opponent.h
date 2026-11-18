@@ -27,7 +27,11 @@ void Opponent_OnBumperPress(uint32_t now);
 // Check if the opponent is detected
 unsigned char OpponentBeaconDetected(void);
 
-// Run opponent search, approach, backoff, and shooting
+// Run opponent search, approach, back off, and shooting
 OpponentStatus Opponent_Update(uint32_t now);
+
+#ifdef SIMULATOR
+const char *Opponent_GetStateName(void);
+#endif
 
 #endif

@@ -1,6 +1,6 @@
 """Transport-only bridge between CoppeliaSim and the original ECE118 C navigation.
 
-Reads six downward-facing vision sensors and one banner-facing sensor.
+Reads six downward-facing vision sensors, one banner-facing sensor, and contact force.
 Calls the compiled C controller with seven digital inputs and applies C motor PWM.
 No navigation logic or movement sequence is implemented in Python.
 """
@@ -32,6 +32,19 @@ STATE_COLORS = {
     'COLLISION_BACKOFF': '93',  # Bright yellow
     'SHOOT_AT_OPPONENT': '96',  # Bright cyan
     'DONE': '37',               # White
+    'BACK_UP': '93',            # Bright yellow
+    'GO_RIGHT': '94',           # Bright blue
+    'GO_FORWARD': '92',         # Bright green
+    'GO_LEFT': '95',            # Bright magenta
+    'PROBE_FORWARD': '96',      # Bright cyan
+    'DETOUR_ALIGN': '94',       # Bright magenta
+    'DETOUR_STRAIGHT': '92',    # Bright green
+    'DETOUR_EXIT_RIGHT': '94',
+    'CHECK_CONTACT': '96',
+    'SCAN_RIGHT': '96',
+    'RETURN_HEADING': '96',
+    'BARRIER_BACKTRACK': '93',
+    'BARRIER_REVERSE': '93',  # Bright blue
 }
 
 
@@ -131,10 +144,35 @@ def optional_proximity_sensor(sim, path):
         return None
 
 
+def bumper_pressed(sim, handle, threshold):
+    """Convert physical bumper force into the digital contact input for C."""
+    result, force, _torque = sim.readForceSensor(handle)
+    if result <= 0 or not force:
+        return 0
+    return int(math.sqrt(sum(component * component for component in force)) >= threshold)
+
+
 def proximity_detected(sim, handle):
-    """Read the first (detection state) result from a CoppeliaSim proximity sensor."""
+    """Forward ray counts ONLY an actual Opponent scene object, not a wall.
+
+    This is sensor identification/transport, not navigation logic. C decides
+    between two shots and obstacle avoidance from its digital input.
+    """
     result = sim.readProximitySensor(handle)
-    return int(bool(result[0] if isinstance(result, (list, tuple)) else result))
+    if not isinstance(result, (tuple, list)) or not result or not result[0]:
+        return 0
+    # CoppeliaSim returns the detected object handle in slot 3.
+    if len(result) < 4:
+        return 0
+    obj = result[3]
+    if obj is None or obj < 0:
+        return 0
+    while obj >= 0:
+        alias = sim.getObjectAlias(obj, -1)  # Naked alias; option 1 returns an object path
+        if alias == 'Opponent':
+            return 1
+        obj = sim.getObjectParent(obj)
+    return 0
 
 
 def space_pressed():
@@ -158,7 +196,7 @@ def space_pressed():
     return pressed
 
 
-def main():
+def main(start_pose=None, verbose=True):
     global STATE_COLOR_ENABLED
     STATE_COLOR_ENABLED = enable_state_colors()
     parser = argparse.ArgumentParser(description=__doc__)
@@ -173,7 +211,11 @@ def main():
                         help='Minimum value in each RGB channel for white')
     parser.add_argument('--banner-min-fraction', type=float, default=0.05,
                         help='Minimum fraction of white pixels in Top camera')
-    args = parser.parse_args()
+    parser.add_argument('--bumper-force-threshold', type=float, default=1.0,
+                        help='Force in newtons required to press either bumper')
+    args = parser.parse_args([] if start_pose is not None else None)
+    if not math.isfinite(args.bumper_force_threshold) or args.bumper_force_threshold <= 0:
+        parser.error('--bumper-force-threshold must be a positive finite number')
     if not 0 <= args.banner_white_min <= 255:
         parser.error('--banner-white-min must be 0..255')
     if not 0 < args.banner_min_fraction <= 1:
@@ -194,6 +236,8 @@ def main():
     dll.SimHost_SetOpponentDetected.restype = None
     dll.SimHost_SetBumperPressed.argtypes = [ctypes.c_ubyte]
     dll.SimHost_SetBumperPressed.restype = None
+    dll.SimHost_SetRearBumperPressed.argtypes = [ctypes.c_ubyte]
+    dll.SimHost_SetRearBumperPressed.restype = None
     dll.SimHost_Step.argtypes = [ctypes.c_double]
     dll.SimHost_Step.restype = None
     dll.SimHost_GetMotors.argtypes = [ctypes.POINTER(ctypes.c_int)] * 2
@@ -221,31 +265,48 @@ def main():
     # 'Top' is the actual banner vision sensor name in Robot.simscene.xml.
     BANNER = sim.getObject('/Robot/TapeSensors/Top')
 
-    # Optional proximity sensors: missing objects are reported as N/A in the log.
+    # Forward is a proximity sensor; the bumper is a physical Force Sensor.
     OPPONENT_DETECTOR = optional_proximity_sensor(sim, '/Robot/TapeSensors/Forward')
-    FRONT_BUMPER = optional_proximity_sensor(sim, '/Robot/FrontBumper')
+    FRONT_BUMPER = optional_proximity_sensor(sim, '/Robot/FrontBumperForce')
+    REAR_BUMPER = optional_proximity_sensor(sim, '/Robot/RearBumperForce')
+    if REAR_BUMPER is None:
+        raise SystemExit('Missing /Robot/RearBumperForce. Open the updated scene.')
+    if sim.getObjectType(REAR_BUMPER) != sim.object_forcesensor_type:
+        raise SystemExit('Robot/RearBumperForce exists but is not a Force Sensor.')
 
     if OPPONENT_DETECTOR is not None and sim.getObjectType(OPPONENT_DETECTOR) != sim.object_proximitysensor_type:
         raise SystemExit('Robot/TapeSensors/Forward exists but is not a Proximity Sensor. '
                          'Change Forward to a Ray Proximity Sensor or provide a vision classifier.')
-    if FRONT_BUMPER is not None and sim.getObjectType(FRONT_BUMPER) != sim.object_proximitysensor_type:
-        raise SystemExit('Robot/FrontBumper exists but is not a Proximity Sensor.')
+    if FRONT_BUMPER is not None and sim.getObjectType(FRONT_BUMPER) != sim.object_forcesensor_type:
+        raise SystemExit('Robot/FrontBumperForce exists but is not a Force Sensor.')
 
     if sim.getSimulationState() != sim.simulation_stopped:
         raise SystemExit('Stop the scene simulation before starting bridge.py')
 
     print('Connected: LeftMotor, RightMotor, six tape sensors, Top (white RGB banner)')
     print('Forward:', 'connected' if OPPONENT_DETECTOR is not None else 'MISSING (OPP=N/A)')
-    print('FrontBumper:', 'connected' if FRONT_BUMPER is not None else 'MISSING (BUMPER=N/A)')
+    print('FrontBumperForce:', f'connected (threshold={args.bumper_force_threshold:g} N)'
+          if FRONT_BUMPER is not None else 'MISSING (BUMPER=N/A)')
+    print('RearBumperForce:', f'connected (threshold={args.bumper_force_threshold:g} N)')
     print('Controls: SPACE = pause/resume, Ctrl+C = exit (Windows terminal).')
     client.setStepping(True)
     left_pwm, right_pwm = ctypes.c_int(), ctypes.c_int()
     previous_log_bucket = -1
     previous_state = None
     previous_bumper = None
+    previous_rear_bumper = None
     previous_opponent = None
     paused = False
     dll.SimHost_Init()
+    if start_pose is not None:
+        x, y, angle = start_pose
+        robot = sim.getObject('/Robot')
+        position = sim.getObjectPosition(robot, -1)
+        sim.setObjectPosition(robot, -1, [float(x), float(y), position[2]])
+        orientation = sim.getObjectOrientation(robot, -1)
+        sim.setObjectOrientation(robot, -1, [orientation[0], orientation[1], math.radians(angle)])
+        print(f'START: x={x:+.2f} y={y:+.2f} yaw={angle} degrees')
+    result = {'done': False, 'state': 'UNKNOWN', 'time': 0.0}
     sim.startSimulation()
     try:
         while float(sim.getSimulationTime()) < args.seconds:
@@ -275,9 +336,13 @@ def main():
                 sim, BANNER, args.banner_white_min, args.banner_min_fraction)
             bits = [v for v, brightness in readings] + [banner_bit]
             dll.SimHost_SetSensors(*bits)
-            # Forward raw digital readings to C; interpretation stays in Opponent.c.
+            # Forward indicates an Opponent object only; decisions stay in C.
             opp = proximity_detected(sim, OPPONENT_DETECTOR) if OPPONENT_DETECTOR is not None else 0
-            bumper = proximity_detected(sim, FRONT_BUMPER) if FRONT_BUMPER is not None else 0
+            bumper = bumper_pressed(sim, FRONT_BUMPER, args.bumper_force_threshold) if FRONT_BUMPER is not None else 0
+            rear_bumper = bumper_pressed(sim, REAR_BUMPER, args.bumper_force_threshold)
+            if previous_rear_bumper is not None and rear_bumper != previous_rear_bumper:
+                print(f't={now:6.2f}s  REAR_BUMPER {previous_rear_bumper} -> {rear_bumper}', flush=True)
+            previous_rear_bumper = rear_bumper
             # Print sensor transitions immediately, even between periodic log lines.
             if FRONT_BUMPER is not None and previous_bumper is not None and bumper != previous_bumper:
                 print(f't={now:6.2f}s  BUMPER {previous_bumper} -> {bumper}', flush=True)
@@ -287,10 +352,12 @@ def main():
             previous_opponent = opp
             dll.SimHost_SetOpponentDetected(opp)
             dll.SimHost_SetBumperPressed(bumper)
+            dll.SimHost_SetRearBumperPressed(rear_bumper)
             dll.SimHost_Step(now)  # Executes Navigation.c (motor steering is handled by Linefollowing.c).
             dll.SimHost_GetMotors(ctypes.byref(left_pwm), ctypes.byref(right_pwm))
             # Observe C state after the navigation tick; no control decisions in Python.
             state = dll.SimHost_GetStateName().decode('ascii')
+            result.update(state=state, time=now)
             if state != previous_state:
                 print(f't={now:6.2f}s  STATE {colored_state(previous_state or "START")} -> {colored_state(state)}', flush=True)
                 previous_state = state
@@ -304,6 +371,7 @@ def main():
 
             # Stop the game as soon as the C navigation reaches DONE.
             if state == 'DONE':
+                result['done'] = True
                 print(f't={now:6.2f}s  GAME OVER - DONE. Motors stopped; ending simulation.', flush=True)
                 break
 
@@ -315,6 +383,7 @@ def main():
                       f'  brightness={avg}'
                       f'  OPP={opp if OPPONENT_DETECTOR is not None else "N/A"}'
                       f'  BUMPER={bumper if FRONT_BUMPER is not None else "N/A"}'
+                      f'  REAR_BUMPER={rear_bumper}'
                       f'  STATE={colored_state(state)}'
                       f'  C PWM L/R={left_pwm.value:+d}/{right_pwm.value:+d}')
                 previous_log_bucket = bucket
@@ -329,6 +398,7 @@ def main():
         except Exception as error:
             print('Cleanup warning:', error)
     print('Bridge stopped.')
+    return result
 
 
 if __name__ == '__main__':

@@ -31,9 +31,14 @@ unsigned char sim_tape_tris[7] = {0};
 
 static unsigned int pwm_left = 0, pwm_right = 0;
 static unsigned char dir_left = FORWARD, dir_right = FORWARD;
-static unsigned char sim_opponent_detected = 0;
-static unsigned char sim_bumper_pressed = 0;
-static unsigned char previous_bumper_pressed = 0;
+unsigned char sim_opponent_detected = 0;
+unsigned char sim_opponent_tris = 0;
+/* Active-low PIC32 bumper inputs, shared by both simulated bumper pins. */
+unsigned char sim_bumper_input = 1;
+unsigned char sim_rear_bumper_input = 1;
+unsigned char sim_rear_bumper_tris = 0;
+unsigned char sim_bumper_left_tris = 0;
+unsigned char sim_bumper_right_tris = 0;
 static uint32_t sim_clock_ms = 0;
 static uint32_t next_nav_timer_ms = 0;
 static unsigned char timer_active = 0;
@@ -60,13 +65,7 @@ uint8_t ES_PostToService(uint8_t priority, ES_Event event) {
     return 1u;
 }
 
-/* Not connected yet: physical bumper, servo, flywheel, and opponent beacon. */
-void Bumper_Init(void) {}
-unsigned char Bumper_IsPressed(void) { return sim_bumper_pressed; }
-void StartBumperRecovery(uint32_t now) { (void)now; }
-unsigned char Bumper_IsShooting(void) { return 0; }
-void Bumper_ShootingComplete(uint32_t now) { (void)now; }
-unsigned char RunBumperRecovery(uint32_t now) { (void)now; return 1; }
+/* Servo/flywheel hardware is stubbed; bumper behavior comes from Bumper.c. */
 void Servo_Init(void) {}
 void Servo1_Open(void) {} void Servo1_Close(void) {}
 void Servo2_Open(void) {} void Servo2_Close(void) {}
@@ -79,25 +78,25 @@ void Servo3_Open(void) {} void Servo3_Close(void) {}
 void Flywheel_Init(void) {}
 void Flywheel_Start(void) {}
 void Flywheel_Stop(void) {}
-/* Opponent.c owns both the beacon interface and search algorithm. */
-unsigned char SimHost_ReadOpponentDetected(void) {
-    return sim_opponent_detected;
-}
+unsigned char SimHost_ReadOpponentDetected(void) { return sim_opponent_detected; }
 
-/* Future beacon input: unused by bridge.py until a real scene object is mapped. */
 EXPORT void SimHost_SetOpponentDetected(unsigned char detected) {
     sim_opponent_detected = detected ? 1u : 0u;
 }
 
-/* Raw contact input from the optional front bumper proximity sensor. */
+/* Digital contact input from the physical bumper force sensor. */
 EXPORT void SimHost_SetBumperPressed(unsigned char pressed) {
-    sim_bumper_pressed = pressed ? 1u : 0u;
+    sim_bumper_input = pressed ? 0 : 1;
+}
+
+EXPORT void SimHost_SetRearBumperPressed(unsigned char pressed) {
+    sim_rear_bumper_input = pressed ? 0 : 1;
 }
 
 EXPORT void SimHost_Init(void) {
     sim_opponent_detected = 0;
-    sim_bumper_pressed = 0;
-    previous_bumper_pressed = 0;
+    sim_bumper_input = 1;
+    sim_rear_bumper_input = 1;
     Motor_Init();
     TapeSensor_Init();
     Bumper_Init(); Servo_Init(); Flywheel_Init(); Opponent_Init();
@@ -146,15 +145,27 @@ EXPORT void SimHost_GetMotors(int *left, int *right) {
     if (right) *right = (int)pwm_right * (dir_right == FORWARD ? +1 : -1);
 }
 
-/* Read-only state inspector, implemented by the original Navigation.c.
- * Python displays this text; it never uses it to decide motor commands.
- */
-#ifdef SIMULATOR
-extern const char *Navigation_GetStateName(void);
-EXPORT const char *SimHost_GetStateName(void) {
-    return Navigation_GetStateName();
+
+
+/* Simulator implementations of the remaining Motor.h movement helpers.
+ * Keep the hardware Motor.c unchanged; the simulator DLL uses this adapter. */
+void Motor_TurnLeft(unsigned int speed) {
+    Motor_SetLeftDirection(REVERSE);
+    Motor_SetRightDirection(FORWARD);
+    Motor_Speed(speed);
 }
-#endif
+
+void Motor_TurnLeftArc(unsigned int speed) {
+    Motor_Direction(FORWARD);
+    Motor_SetLeftSpeed(speed / 3u);
+    Motor_SetRightSpeed(speed);
+}
+
+void Motor_TurnRightArc(unsigned int speed) {
+    Motor_Direction(FORWARD);
+    Motor_SetLeftSpeed(speed);
+    Motor_SetRightSpeed(speed / 3u);
+}
 
 /* Motor helpers, bumper edge detection, and diagnostic state names. */
 
@@ -180,25 +191,16 @@ void Motor_TurnRight(unsigned int speed) {
     Motor_Speed(speed);
 }
 
-/* Detect one new bumper press, matching the hardware edge behavior. */
-unsigned char Bumper_NewPress(void) {
-    unsigned char pressed = Bumper_IsPressed();
-    unsigned char new_press = pressed && !previous_bumper_pressed;
-    previous_bumper_pressed = pressed;
-    return new_press;
-}
-
 extern unsigned int Navigation_GetDiagnosticState(void);
-const char *Navigation_GetStateName(void) {
-    static const char *const labels[] = {
-        "FIND_TAPE", "FOLLOW_TAPE", "BUMPED",
-        "SHOOT_AT_TOWER", "FIND_OPPONENT", "DONE"
-    };
+EXPORT const char *SimHost_GetStateName(void) {
     unsigned int state = Navigation_GetDiagnosticState();
-    if (state == 4u) {
-        /* Navigation owns the opponent task; Opponent.c owns its stages. */
-        extern const char *Opponent_GetStateName(void);
-        return Opponent_GetStateName();
+    switch (state) {
+        case 0: return "FIND_TAPE";
+        case 1: return "FOLLOW_TAPE";
+        case 2: return "BUMPER_ESCAPE";
+        case 3: return "SHOOT_AT_TOWER";
+        case 4: return Opponent_GetStateName();
+        case 5: return "DONE";
+        default: return "UNKNOWN";
     }
-    return state < 6u ? labels[state] : "UNKNOWN";
 }

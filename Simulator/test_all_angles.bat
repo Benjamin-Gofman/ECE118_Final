@@ -13,6 +13,8 @@ gcc -DSIMULATOR -std=c11 -Wall -Wextra -O2 -shared ^
     -o sim_robot.dll ^
     SimHost.c ^
     "..\ECE118_Final.X\Navigation.c" ^
+    "..\ECE118_Final.X\Bumper.c" ^
+    "..\ECE118_Final.X\Opponent.c" ^
     "..\ECE118_Final.X\LineFollowing.c" ^
     "..\ECE118_Final.X\TapeSensor.c"
 if errorlevel 1 (
