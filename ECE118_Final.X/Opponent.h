@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <IO_Ports.h>
 
-#define BEACON_TRIS  PORTW06_TRIS
-#define BEACON_INPUT PORTW06_BIT
+#define BEACON_TRIS  PORTW03_TRIS
+#define BEACON_INPUT PORTW03_BIT
 
 #define OPPONENT_SHOT_COUNT 2 // Number of balls released at opponent
 

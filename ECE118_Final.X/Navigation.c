@@ -54,13 +54,12 @@ static unsigned char TimePassed(unsigned int now, uint32_t milliseconds) {
     return (uint32_t) (now - stepStart) >= milliseconds;
 }
 
-// Feed one ball and update the tower count
-
+/* Feed one ball and update the tower count */
 static void RunTower(unsigned int now) {
     Motor_Stop();
 
+    // Close the feeder after giving one ball time to pass
     if (!ballReleased && TimePassed(now, FEED_ACTION_MS)) {
-        // Close the feeder after giving one ball time to pass
         Servo2_Close();
         ballReleased = 1;
         stepStart = now;
@@ -72,14 +71,12 @@ static void RunTower(unsigned int now) {
     }
 
     towerCount++;
-    // Wait for the banner to clear before allowing another shot
-    bannerArmed = 0;
-
     // Reset for the next tower
+    bannerArmed = 0;
     ballReleased = 0;
 
+    // Search for opponent after two tower shots
     if (towerCount >= TOWER_TARGET_COUNT) {
-        // After two different banner/tower shots, tape navigation is finished forever.
         Opponent_StartSearch(now);
         movement = FIND_OPPONENT;
     } else {
@@ -98,8 +95,9 @@ static void UpdateNavigation(uint32_t now) {
     }
 
     if (movement == FIND_OPPONENT) {
+        // Update opponent state
         OpponentStatus result = Opponent_Update(now);
-        // Check if opponent task is finished or failed
+        // Stop after shooting the opponent twice or timing out
         if (result == OPPONENT_FINISHED || result == OPPONENT_FAILED) {
             Motor_Stop();
             movement = DONE;
@@ -153,28 +151,8 @@ static void UpdateNavigation(uint32_t now) {
         }
     }
 
-    if (drivingInReverse) {
-        // Swap front and rear sensors and reverse left/right when driving backward
-        for (unsigned int i = 0; i < 3; i++) {
-            unsigned char saved = onTape[i];
-            onTape[i] = onTape[5 - i];
-            onTape[5 - i] = saved;
-        }
-    }
-
-    // Keep moving in the current direction if no tape is detected
-    if (!onTape[0] && !onTape[1] && !onTape[2]) {
-        movement = FIND_TAPE;
-        if (drivingInReverse) {
-            Motor_Reverse(DRIVE_PWM);
-        } else {
-            Motor_Forward(DRIVE_PWM);
-        }
-        return;
-    }
-
-    movement = FOLLOW_TAPE;
-    LineFollowing(onTape, drivingInReverse);
+    // Switch to FIND_TAPE if the line is lost, keep following otherwise
+    movement = LineFollowing(onTape, drivingInReverse) ? FOLLOW_TAPE : FIND_TAPE;
 }
 
 /* ES_CheckEvents.c, detects bumper presses and posts events */
@@ -217,6 +195,7 @@ ES_Event RunNavigation(ES_Event event) {
     if (event.EventType == ES_INIT) {
         movement = FIND_TAPE;
         drivingInReverse = 0;
+        LineFollowing_Reset();
         towerCount = 0;
         lastTowerShotAt = 0;
         bannerArmed = 1;
@@ -248,6 +227,7 @@ ES_Event RunNavigation(ES_Event event) {
                 ballReleased = 0;
                 // Front contact selects reverse. Rear contact selects forward.
                 drivingInReverse = rearHit ? 0 : 1;
+                LineFollowing_Reset();
                 // Start a new tower count in the new travel direction.
                 towerCount = 0;
                 bannerArmed = 0;

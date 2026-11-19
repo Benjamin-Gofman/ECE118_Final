@@ -4,14 +4,14 @@
  *
  * Uno32 -> L298
  * Left motor:
- * Y10 -> ENA
- * Y06 -> IN1
- * Y07 -> IN2
+ * Z06 -> ENA
+ * Z11 -> IN1
+ * Z09 -> IN2
  *
  * Right motor:
- * Y12 -> ENB
- * Y08 -> IN3
- * Y09 -> IN4
+ * Y04 -> ENB
+ * Z07 -> IN3
+ * Z05 -> IN4
  *
  * Connect all grounds together.
  */
@@ -22,18 +22,18 @@
 #include "Motor.h"
 
 // Left motor pins
-#define LEFT_PWM       PWM_PORTY10
-#define LEFT_IN1_TRIS  PORTY06_TRIS
-#define LEFT_IN1_LAT   PORTY06_LAT
-#define LEFT_IN2_TRIS  PORTY07_TRIS
-#define LEFT_IN2_LAT   PORTY07_LAT
+#define LEFT_PWM       PWM_PORTZ06
+#define LEFT_IN1_TRIS  PORTZ11_TRIS
+#define LEFT_IN1_LAT   PORTZ11_LAT
+#define LEFT_IN2_TRIS  PORTZ09_TRIS
+#define LEFT_IN2_LAT   PORTZ09_LAT
 
 // Right motor pins
-#define RIGHT_PWM      PWM_PORTY12
-#define RIGHT_IN3_TRIS PORTY08_TRIS
-#define RIGHT_IN3_LAT  PORTY08_LAT
-#define RIGHT_IN4_TRIS PORTY09_TRIS
-#define RIGHT_IN4_LAT  PORTY09_LAT
+#define RIGHT_PWM      PWM_PORTY04
+#define RIGHT_IN3_TRIS PORTZ07_TRIS
+#define RIGHT_IN3_LAT  PORTZ07_LAT
+#define RIGHT_IN4_TRIS PORTZ05_TRIS
+#define RIGHT_IN4_LAT  PORTZ05_LAT
 
 void Motor_Init(void) {
     // Set all direction pins as outputs
@@ -114,6 +114,12 @@ void Motor_TurnRight(unsigned int speed) {
     Motor_SetLeftDirection(FORWARD);
     Motor_SetRightDirection(REVERSE);
     Motor_Speed(speed);
+}
+
+void Motor_TurnLeft(unsigned int speed) {
+        Motor_SetLeftDirection(REVERSE);
+        Motor_SetRightDirection(FORWARD);
+        Motor_Speed(speed);
 }
 
 void Motor_Stop(void) {

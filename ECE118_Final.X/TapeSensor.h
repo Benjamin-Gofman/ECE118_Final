@@ -1,5 +1,5 @@
 /*
- * Defines the six tape sensor inputs and functions.
+ * Defines the 7 tape sensor inputs and functions.
  */
 
 #ifndef TAPE_SENSOR_H
@@ -8,21 +8,20 @@
 #include <BOARD.h>
 #include <IO_Ports.h>
 
-// Read the seven sensor pins
-#define FRONT_LEFT        PORTW05_BIT
-#define FRONT_LEFT_TRIS   PORTW05_TRIS
-#define FRONT_CENTER      PORTW04_BIT
-#define FRONT_CENTER_TRIS PORTW04_TRIS
-#define FRONT_RIGHT       PORTW03_BIT
-#define FRONT_RIGHT_TRIS  PORTW03_TRIS
-#define REAR_LEFT         PORTZ03_BIT
-#define REAR_LEFT_TRIS    PORTZ03_TRIS
-#define REAR_CENTER       PORTZ04_BIT
-#define REAR_CENTER_TRIS  PORTZ04_TRIS
-#define REAR_RIGHT        PORTZ05_BIT
-#define REAR_RIGHT_TRIS   PORTZ05_TRIS
-#define TOP               PORTY11_BIT
-#define TOP_TRIS          PORTY11_TRIS
+#define FRONT_LEFT        PORTW08_BIT
+#define FRONT_LEFT_TRIS   PORTW08_TRIS
+#define FRONT_CENTER      PORTW06_BIT
+#define FRONT_CENTER_TRIS PORTW06_TRIS
+#define FRONT_RIGHT       PORTW04_BIT
+#define FRONT_RIGHT_TRIS  PORTW04_TRIS
+#define REAR_LEFT         PORTY12_BIT
+#define REAR_LEFT_TRIS    PORTY12_TRIS
+#define REAR_CENTER       PORTY11_BIT
+#define REAR_CENTER_TRIS  PORTY11_TRIS
+#define REAR_RIGHT        PORTY10_BIT
+#define REAR_RIGHT_TRIS   PORTY10_TRIS
+#define TOP               PORTY03_BIT
+#define TOP_TRIS          PORTY03_TRIS
 
 // Initialize sensor inputs
 char TapeSensor_Init(void);
