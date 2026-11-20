@@ -8,7 +8,7 @@ if errorlevel 1 (
     exit /b 1
 )
 echo Building sim_robot.dll...
-gcc -DSIMULATOR -std=c11 -Wall -Wextra -O2 -shared ^
+gcc  -std=c11 -Wall -Wextra -O2 -shared ^
     -ISimulatorSupport -I"..\ECE118_Final.X" ^
     -o sim_robot.dll ^
     SimHost.c ^

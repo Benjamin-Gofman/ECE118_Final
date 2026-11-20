@@ -6,12 +6,12 @@
 #include "Servo.h"
 #include "Flywheel.h"
 
-#define SCAN_360_MS         6400 // One full turn
-#define COLLISION_BACKOFF_MS 400 // Reverse after opponent collision
-#define BACKOFF_MAX_MS      1500 // Stop if the bumper stays pressed
-#define FLYWHEEL_READY_MS   1000 // Allow flywheels to reach speed
-#define FEED_ACTION_MS       300 // Time for opening or closing feeder
-#define BALL_ROLL_MS        1000 // Wait for the ball to roll down the slide
+#define SCAN_360_MS         6000u  // Time allowed for a full rotation
+#define COLLISION_BACKOFF_MS 400u  // Time to reverse after opponent collision
+#define BACKOFF_MAX_MS      1500u  // Maximum time to reverse if bumper stays pressed
+#define FLYWHEEL_READY_MS   1000u  // Time for flywheels to reach speed
+#define FEED_ACTION_MS       300u  // Time to open or close the feeder
+#define BALL_ROLL_MS        1000u  // Time for the ball to roll down the slide
 
 typedef enum {
     OPP_SEARCH,
@@ -25,11 +25,11 @@ typedef enum {
 
 static OpponentState state = OPP_SEARCH;
 static uint32_t stepStart;
-static unsigned char shots = 0;
-static unsigned char ballReleased = 0;
+static unsigned char shots = 0u;
+static unsigned char ballReleased = 0u;
+static unsigned char forwardAllowed = 1u;
 
-#ifdef SIMULATOR
-// Read-only opponent state for simulator diagnostics
+// Returns the opponent state for the simulator
 
 const char *Opponent_GetStateName(void) {
     static const char *const names[] = {
@@ -39,49 +39,42 @@ const char *Opponent_GetStateName(void) {
     unsigned int index = (unsigned int) state;
     return index < 7u ? names[index] : "OPP_UNKNOWN";
 }
-#endif
 
-// Initialize opponent detection and reset the search
-
+/* Initialize opponent detection and reset the search */
 void Opponent_Init(void) {
-#ifndef SIMULATOR
     BEACON_TRIS = 1;
-#endif
     state = OPP_SEARCH;
-    shots = 0;
-    ballReleased = 0;
+    shots = 0u;
+    ballReleased = 0u;
+    forwardAllowed = 1u;
 }
 
-// Check if the opponent is detected
+/* Enables or disables beacon detection */
+void Opponent_EnableBeacon(unsigned char allowed) {
+    forwardAllowed = allowed ? 1u : 0u;
+}
 
+/* Read beacon sensor */
 unsigned char OpponentBeaconDetected(void) {
-#ifdef SIMULATOR
-    extern unsigned char SimHost_ReadOpponentDetected(void);
-    return SimHost_ReadOpponentDetected();
-#else
     return BEACON_INPUT;
-#endif
 }
 
-// Check if enough time has passed
-
+/* Check if enough time has passed */
 static unsigned char TimePassed(uint32_t now, uint32_t milliseconds) {
     return (uint32_t) (now - stepStart) >= milliseconds;
 }
 
-// Start searching for the opponent
-
+/* Start searching for the opponent */
 void Opponent_StartSearch(uint32_t now) {
     Motor_Stop();
     Flywheel_Stop();
     state = OPP_SEARCH;
     stepStart = now;
-    shots = 0;
-    ballReleased = 0;
+    shots = 0u;
+    ballReleased = 0u;
 }
 
-// Handle the bumper press and start backing off
-
+/* Handle the bumper press and start backing off */
 void Opponent_OnBumperPress(uint32_t now) {
     if (state != OPP_APPROACH) {
         return;
@@ -92,20 +85,23 @@ void Opponent_OnBumperPress(uint32_t now) {
     Motor_Reverse(SLOW_PWM);
 }
 
-// Run opponent search, approach, backoff, and shooting
-
+/* Run opponent search, approach, backoff, and shooting */
 OpponentStatus Opponent_Update(uint32_t now) {
     switch (state) {
         case OPP_SEARCH:
+            // Pause the search timer until beacon detection is enabled
+            if (!forwardAllowed) {
+                stepStart = now;
+            }
             // Rotate until the opponent is detected
-            if (OpponentBeaconDetected()) {
+            if (forwardAllowed && OpponentBeaconDetected()) {
                 state = OPP_APPROACH;
                 Motor_Forward(DRIVE_PWM);
             } else if (TimePassed(now, SCAN_360_MS)) {
                 Motor_Stop();
                 state = OPP_FAILED;
             } else {
-                Motor_TurnRight(SLOW_PWM);
+                Motor_TurnRight(SNAIL_PWM);
             }
             break;
 
@@ -133,8 +129,8 @@ OpponentStatus Opponent_Update(uint32_t now) {
             // Wait for the flywheels before shooting
             Motor_Stop();
             if (TimePassed(now, FLYWHEEL_READY_MS)) {
-                shots = 0;
-                ballReleased = 0;
+                shots = 0u;
+                ballReleased = 0u;
                 Servo1_Open();
                 Servo2_Open();
                 stepStart = now;
@@ -148,7 +144,7 @@ OpponentStatus Opponent_Update(uint32_t now) {
             if (!ballReleased) {
                 if (TimePassed(now, FEED_ACTION_MS)) {
                     Servo2_Close();
-                    ballReleased = 1;
+                    ballReleased = 1u;
                     stepStart = now;
                 }
             } else if (TimePassed(now, BALL_ROLL_MS)) {
@@ -158,7 +154,7 @@ OpponentStatus Opponent_Update(uint32_t now) {
                     Flywheel_Stop();
                     state = OPP_DONE;
                 } else {
-                    ballReleased = 0;
+                    ballReleased = 0u;
                     stepStart = now;
                     Servo1_Open();
                     Servo2_Open();

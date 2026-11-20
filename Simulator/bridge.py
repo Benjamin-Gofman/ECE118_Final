@@ -32,6 +32,8 @@ STATE_COLORS = {
     'COLLISION_BACKOFF': '93',  # Bright yellow
     'SHOOT_AT_OPPONENT': '96',  # Bright cyan
     'DONE': '37',               # White
+    'BOUNDARY_BACK_UP': '93',   # Bright yellow: emergency escape
+    'BOUNDARY_TURN': '91',# Bright red: turn away from the boundary
     'BACK_UP': '93',            # Bright yellow
     'GO_RIGHT': '94',           # Bright blue
     'GO_FORWARD': '92',         # Bright green
@@ -245,6 +247,11 @@ def main(start_pose=None, verbose=True):
     # The returned string is owned by the C library; ctypes decodes a copy.
     dll.SimHost_GetStateName.argtypes = []
     dll.SimHost_GetStateName.restype = ctypes.c_char_p
+    # Read-only C state diagnostics. Python never decides robot movement.
+    dll.SimHost_IsDrivingInReverse.argtypes = []
+    dll.SimHost_IsDrivingInReverse.restype = ctypes.c_ubyte
+    dll.SimHost_EscapeStoppedByRearTape.argtypes = []
+    dll.SimHost_EscapeStoppedByRearTape.restype = ctypes.c_ubyte
 
     client = get_remote_client()
     sim = client.require('sim')
@@ -360,6 +367,17 @@ def main(start_pose=None, verbose=True):
             result.update(state=state, time=now)
             if state != previous_state:
                 print(f't={now:6.2f}s  STATE {colored_state(previous_state or "START")} -> {colored_state(state)}', flush=True)
+                # Capture the exact 10 ms sensor snapshot at an emergency
+                # transition, not only the periodic 500 ms status report.
+                if state in ('BOUNDARY_BACK_UP', 'BOUNDARY_TURN'):
+                    reverse = bool(dll.SimHost_IsDrivingInReverse())
+                    leading = bits[3:6] if reverse else bits[0:3]
+                    escape_rear = bool(dll.SimHost_EscapeStoppedByRearTape())
+                    print(f't={now:6.2f}s  BOUNDARY DETAIL'
+                          f'  DIR={"REVERSE" if reverse else "FORWARD"}'
+                          f'  FL/FM/FR={bits[0:3]}  RL/RM/RR={bits[3:6]}'
+                          f'  LEADING={leading}'
+                          f'  ESCAPE_REAR_HIT={int(escape_rear)}', flush=True)
                 previous_state = state
 
             # PWM -> joint angular speed. This is transport mapping, NOT navigation.

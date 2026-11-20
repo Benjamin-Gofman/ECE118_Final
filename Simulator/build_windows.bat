@@ -9,7 +9,8 @@ if errorlevel 1 (
     exit /b 1
 )
 echo Building sim_robot.dll for Windows...
-gcc -DSIMULATOR -std=c11 -Wall -Wextra -O2 -shared ^
+rem PIC32 sources use the virtual IO_Ports.h via -ISimulatorSupport; no SIMULATOR macro is required.
+gcc -std=c11 -Wall -Wextra -O2 -shared ^
     -ISimulatorSupport -I"..\ECE118_Final.X" ^
     -o sim_robot.dll ^
     SimHost.c ^

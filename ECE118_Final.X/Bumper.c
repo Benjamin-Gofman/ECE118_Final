@@ -13,10 +13,10 @@
 
 #define BACKUP_MS 600u
 
-static uint32_t stepStart = 0;
-static unsigned char escapeInReverse = 1;
-static unsigned char previousBumperPressed = 0;
-static unsigned char previousRearPressed = 0;
+static uint32_t stepStart = 0u;
+static unsigned char escapeInReverse = 1u;
+static unsigned char previousBumperPressed = 0u;
+static unsigned char previousRearPressed = 0u;
 
 void Bumper_Init(void) {
     // Configure all bumper pins as inputs
@@ -24,14 +24,14 @@ void Bumper_Init(void) {
     RIGHT_BUMPER_TRIS = 1;
     REAR_BUMPER_TRIS = 1;
 
-    previousBumperPressed = 0;
-    previousRearPressed = 0;
+    previousBumperPressed = 0u;
+    previousRearPressed = 0u;
 }
 
 static unsigned char ReadPressedBumpers(void) {
     // 0V when pressed, 3.3V when released
-    unsigned char leftPressed = (LEFT_BUMPER_BIT == 0);
-    unsigned char rightPressed = (RIGHT_BUMPER_BIT == 0);
+    unsigned char leftPressed = (LEFT_BUMPER_BIT == 0u);
+    unsigned char rightPressed = (RIGHT_BUMPER_BIT == 0u);
 
     // 10 = left only, 01 = right only, 11 = both
     return (unsigned char) ((leftPressed << 1) | rightPressed);
@@ -39,7 +39,7 @@ static unsigned char ReadPressedBumpers(void) {
 
 unsigned char Bumper_IsPressed(void) {
     // Return 1 if either front bumper is currently pressed
-    return ReadPressedBumpers() != 0;
+    return ReadPressedBumpers() != 0u;
 }
 
 unsigned char Bumper_NewPress(void) {
@@ -55,7 +55,7 @@ unsigned char Bumper_NewPress(void) {
 
 unsigned char Bumper_RearIsPressed(void) {
     // Return 1 if the rear bumper is currently pressed
-    return REAR_BUMPER_BIT == 0;
+    return REAR_BUMPER_BIT == 0u;
 }
 
 unsigned char Bumper_RearNewPress(void) {

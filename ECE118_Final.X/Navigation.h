@@ -16,8 +16,7 @@ uint8_t PostNavigation(ES_Event event);
 // ES_Framework.c, ES_Run() calls this to handle one queued event
 ES_Event RunNavigation(ES_Event event);
 
-#ifdef SIMULATOR
+// Returns the navigation state for the simulator
 unsigned int Navigation_GetDiagnosticState(void);
-#endif
 
 #endif

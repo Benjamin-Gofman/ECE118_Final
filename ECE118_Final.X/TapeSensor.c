@@ -42,13 +42,13 @@ char TapeSensor_CheckTape(unsigned int readings[6], unsigned char onTape[6]) {
         return ERROR;
     }
 
-    for (unsigned int sensor = 0; sensor < 6; sensor++) {
+    for (unsigned int sensor = 0u; sensor < 6u; sensor++) {
         if (readings[sensor] == 1) {
             //  HIGH = sensor sees black tape
-            onTape[sensor] = 1;
+            onTape[sensor] = 1u;
         } else {
             // LOW = sensor sees white floor
-            onTape[sensor] = 0;
+            onTape[sensor] = 0u;
         }
     }
 

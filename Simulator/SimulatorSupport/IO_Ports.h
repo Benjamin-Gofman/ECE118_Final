@@ -38,6 +38,9 @@ extern unsigned char sim_rear_bumper_tris;
 #define PORTV04_BIT  sim_rear_bumper_input
 #define PORTV04_TRIS sim_rear_bumper_tris
 
+/* The same BEACON_INPUT/BEACON_TRIS macros used by the PIC32 firmware
+ * now read/write these virtual pins; no #ifdef is needed in Opponent.c.
+ * SimHost_SetOpponentDetected() updates sim_opponent_detected from bridge.py. */
 #define PORTW03_BIT  sim_opponent_detected
 #define PORTW03_TRIS sim_opponent_tris
 

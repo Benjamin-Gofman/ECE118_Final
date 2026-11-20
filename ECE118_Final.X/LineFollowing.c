@@ -1,54 +1,51 @@
 #include "LineFollowing.h"
 #include "Motor.h"
 
-static signed char tapeTurn = 0; // -1 = left, 1 = right
+static unsigned char tapeFound = 0u;
 
-void LineFollowing_Reset(void) {
-    tapeTurn = 0;
+/* Sets direction and motor speeds */
+static void SetMotorSpeeds(char reverse, int leftPwm, int rightPwm) {
+    // Set the 3 parameters
+    Motor_Direction(reverse ? REVERSE : FORWARD);
+    Motor_SetLeftSpeed(leftPwm);
+    Motor_SetRightSpeed(rightPwm);
+}
+
+// Called by Navigation.c
+
+void Set_TapeFound(unsigned char found) {
+    tapeFound = found;
 }
 
 unsigned char LineFollowing(const unsigned char onTape[6],
-        unsigned char drivingInReverse) {
-    // If direction = forward, use FL. If direction = backward, use RR.
-    unsigned char leftOnTape = onTape[drivingInReverse ? 5 : 0];
-    // If direction = forward, use FM. If direction = backward, use RM.
-    unsigned char middleOnTape = onTape[drivingInReverse ? 4 : 1];
-    // If direction = forward, use FR. If direction = backward, use RL.
-    unsigned char rightOnTape = onTape[drivingInReverse ? 3 : 2];
+        unsigned char reverse) {
+    // Forward = FL, Backward = RL
+    unsigned char leftOnTape = onTape[reverse ? 3 : 0];
+    // Forward = FM, Backward = RM
+    unsigned char middleOnTape = onTape[reverse ? 4 : 1];
+    // Forward = FR, Backward = RR
+    unsigned char rightOnTape = onTape[reverse ? 5 : 2];
 
-    if (middleOnTape) {
-        tapeTurn = 0;
-        if (drivingInReverse) {
-            Motor_Reverse(SLOW_PWM);
-        } else {
-            Motor_Forward(SLOW_PWM);
-        }
-        return 1;
+    // Stop before reversing
+    if (rightOnTape) {
+        Motor_Stop();
+        return 1u;
     }
 
-    // Turn if side sensor sees tape and not presently turning
-    if (!tapeTurn && (leftOnTape || rightOnTape)) {
-        // Turn right going forward and left going backward
-        tapeTurn = drivingInReverse ? -1 : 1;
+    // Adjust the robot's position to stay between FL and FM (RL and RM in reverse)
+    if (leftOnTape || middleOnTape) {
+        tapeFound = 1u;
+        SetMotorSpeeds(reverse, SLOW_PWM, SNAIL_PWM);
+        return 1u;
     }
 
-    // Turn right
-    if (tapeTurn > 0) {
-        Motor_TurnRight(SLOW_PWM);
-        return 1;
+    if (!tapeFound) {
+        // Drive straight
+        SetMotorSpeeds(reverse, DRIVE_PWM, DRIVE_PWM);
+        return 0u;
     }
 
-    // Turn left
-    if (tapeTurn < 0) {
-        Motor_TurnLeft(SLOW_PWM);
-        return 1;
-    }
-
-    // Look for tape
-    if (drivingInReverse) {
-        Motor_Reverse(DRIVE_PWM);
-    } else {
-        Motor_Forward(DRIVE_PWM);
-    }
-    return 0;
+    // Curve left to rediscover the tape
+    SetMotorSpeeds(reverse, SNAIL_PWM, SLOW_PWM);
+    return 0u;
 }

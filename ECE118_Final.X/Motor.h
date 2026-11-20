@@ -5,8 +5,9 @@
 #define REVERSE 0
 
 // Driving speeds (0 to 1000 PWM)
-#define DRIVE_PWM 800 // 80% PWM
-#define SLOW_PWM  600 // 60% PWM
+#define DRIVE_PWM      800u // 80% PWM
+#define SLOW_PWM       600u // 60% PWM
+#define SNAIL_PWM      400u // 40% PWM
 
 // Initialize motor pins and PWM
 void Motor_Init(void);

@@ -78,7 +78,9 @@ void Servo3_Open(void) {} void Servo3_Close(void) {}
 void Flywheel_Init(void) {}
 void Flywheel_Start(void) {}
 void Flywheel_Stop(void) {}
-unsigned char SimHost_ReadOpponentDetected(void) { return sim_opponent_detected; }
+/* The robot sources now use BEACON_INPUT from IO_Ports.h on both targets.
+ * Only this adapter receives the Python Forward sensor and writes its
+ * virtual port pin; no direct SimHost call is made by Opponent.c. */
 
 EXPORT void SimHost_SetOpponentDetected(unsigned char detected) {
     sim_opponent_detected = detected ? 1u : 0u;
@@ -197,10 +199,22 @@ EXPORT const char *SimHost_GetStateName(void) {
     switch (state) {
         case 0: return "FIND_TAPE";
         case 1: return "FOLLOW_TAPE";
-        case 2: return "BUMPER_ESCAPE";
-        case 3: return "SHOOT_AT_TOWER";
-        case 4: return Opponent_GetStateName();
-        case 5: return "DONE";
+        case 2: return "BOUNDARY_BACK_UP";
+        case 3: return "BOUNDARY_TURN";
+        case 4: return "BUMPED";
+        case 5: return "SHOOT_AT_TOWER";
+        case 6: return Opponent_GetStateName();
+        case 7: return "DONE";
         default: return "UNKNOWN";
     }
+}
+
+/* Diagnostics exported to bridge.py; all decisions remain in Navigation.c. */
+extern unsigned char Navigation_IsDrivingInReverse(void);
+extern unsigned char Navigation_EscapeStoppedByRearTape(void);
+EXPORT unsigned char SimHost_IsDrivingInReverse(void) {
+    return Navigation_IsDrivingInReverse();
+}
+EXPORT unsigned char SimHost_EscapeStoppedByRearTape(void) {
+    return Navigation_EscapeStoppedByRearTape();
 }
